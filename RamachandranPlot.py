@@ -1,7 +1,7 @@
 
 ''' ================================================================================================================
 
-	Script to read through a list of dihedral torsion angles and calculate the frequency density of the data set
+	Script to read through a list of dihedral (torsion) angles and calculate the frequency density of the data set
  
 
 	================================================================================================================ '''
