@@ -1,7 +1,7 @@
 
 ''' ================================================================================================================
 
-				Deploy in the same directory as the .pdb from which the ramalyze results wish to be generated. 
+		Deploy in the same directory as the .pdb from which the phenix.ramalyze results wish to be generated. 
 
 	================================================================================================================ '''
 
