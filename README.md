@@ -19,9 +19,17 @@ Phenix Suite (install [here](https://www.phenix-online.org/download/))
 
 ## Example Ouput Figures
 
-<!-- ![](http://example.com/image.jpg)
-![](./image.jpg) -->
-<!-- The above is commented out in HTML --> 
+All angle plot 
+![](./example_plots/AllRamachangranPlot.png)
+
+Glycine only plot
+![](./example_plots/GlycineRamachangranPlot.png)
+
+Proline only plot
+![](./example_plots/ProlineRamachangranPlot.png)
+
+
+
 
 ## Run Instructions
 
@@ -58,9 +66,11 @@ Several parameters can be easily adjusted to change the appearence of the return
 | :--- | :--- | :--- | 
 |Figure size| figure_size |Adjusts the output figure size (inches) as a tuple|
 |Figure resolution | out_resolution|Output final figure resolution (high values will slow the process down)|
-|Contour level |contour_level|Level at which to draw the contour lines. Should be a value between 0-100 to represent to percemtile at which dihedral angles from the Top8000 peptide DB fall within. e.g. a value 96 coresponds to the area where 96 % of dihedral angles fall within. |
+|Inner contour line level |contour_level_inner|Level at which to draw the inner contour lines. Should be a value between 0-100 to represent to percemtile at which dihedral angles from the Top8000 peptide DB fall within. e.g. a value 96 coresponds to the area where at least 96 % of dihedral angles fall within. |
+| Outer contour line level | contour_level_outer |Level at which to draw the outer contour lines. Should be a value between 0-100 to represent to percemtile at which dihedral angles from the Top8000 peptide DB fall within. e.g. a value 15 coresponds to the area where at least 15 % of dihedral angles fall within. |
 |Favoured region colour |background_colour| Colour of the favoured dihedral angle region data points are plotted against*. |
-|Contour line colour |contour_line_color|Colour of contour lines. |
+|Inner contour line colour |contour_line_color_inner|Colour of inner contour lines. |
+|Outer contour line colour |contour_line_color_outer|Colour of outer contour lines. |
 |Data point colour |data_point_colour |Colour of data point for all dihedral angle pairs. |
 |Outlier colour |outlier_colour|Colour of dihedral angle outliers. |
 |Data point edge colour |data_point_edge_colour |Colour of the borders for data point colours (outlier and favoured).|
