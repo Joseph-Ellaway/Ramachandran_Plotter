@@ -95,10 +95,11 @@ Joseph I. J. Ellaway
 josephellaway@gmail.com
 
 MSc Bioinformatics and Theoretical Systems Biology, Imperial College London
+
 BSc Biochemistry with a Year in Research, Imperial College London
 
 
 ## Acknowledgments
-Code to make these plots was written for my final year project report, supervised by Dr James W. Murray. 
+Code was written for my undergraduate final year project report, supervised by Dr James W. Murray. 
 
-Example plots were generated using the GAPDH-CP12-PRK cryoEM structure from [McFarlane et. al. (2019)](https://www.pnas.org/content/116/42/20984) [(PDB: 6GVE)](https://www.rcsb.org/structure/6GVE).
+Example plots were generated using the GAPDH-CP12-PRK cryoEM structure from [McFarlane et. al. (2019)](https://www.pnas.org/content/116/42/20984)/[(PDB: 6GVE)](https://www.rcsb.org/structure/6GVE).
