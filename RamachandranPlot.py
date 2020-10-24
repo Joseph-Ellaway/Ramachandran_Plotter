@@ -1,8 +1,12 @@
 
 ''' ================================================================================================================
 
-	Script to read through a list of dihedral (torsion) angles and calculate the frequency density of the data set
- 
+	Plots the frequency density of the dihedral (torsion) angles from the Top8000 peptide database as a background 
+	histogram, along with two contour lines. 
+
+	The user's input peptide's dihedral angles are then added ontop of this background as a scatter plot. 
+
+	Colours and recommended parameters can be easily adjusted towards the end of the script. 
 
 	================================================================================================================ '''
 
@@ -119,7 +123,7 @@ def Smoother(out_file_name, figsize):
 ########################################################
 
 # CONDITIONAL CHECK TO ENSURE USER SELECTS THE DESIRED RAMACHANDRAN PLOT
-if len(sys.argv) == 1 or len(sys.argv) == 2:
+if len(sys.argv) < 3:
 	print('\n \n Enter valid PDB file name and Ramachandran plot code. \n Available options are: \n \
 #################################### \n \
 	0 = All angles \n \
@@ -223,11 +227,14 @@ zero_lines_kwargs = {
 	'zorder' : 3, 
 	'linewidths' : [1]
 	}
-figure_size = (8,8)						# Output figure size in inches. Adjust this to your requirements. 
-contour_line_color = '#DFF8FB'			# Contour line colour. Adjust to suite your preferences. 
-contour_level = 96						# Percentile of dihedral angles (e.g. contour_level=96 means the area bounded by the contour line represents the range of angles in which 96% of all dihedral from the Top800 peptide DB fall within. )
-										# contour_level can be adjusted.
-out_resolution = 200					# Output figure resolution. Adjustable. 
+# Recommended adjustable parameters. 
+figure_size = (8,8)						# Output figure size in inches.
+contour_line_color_inner = '#DFF8FB'	# Inner contour line colour.
+contour_level_inner = 96				# Percentile of dihedral angles for inner contour lines (e.g. contour_level=96 means the area bounded by the contour line represents the range of angles in which 96% of all dihedral from the Top800 peptide DB fall within).
+contour_level_outer = 15				# Percentile of dihedral angles for outer contour lines
+contour_line_color_outer = '#045E93'	# Colour of outer contour lines
+contour_line_alpha_outer = 0.2			# Opacity of outer contour lines
+out_resolution = 200					# Output figure resolution.
 data_point_colour = '#D4AB2D'			# Colour of data points for each Phi-Psi dihedral angle pair. 
 data_point_edge_colour = '#3c3c3c'		# Colour of data point's border.
 outlier_colour = 'Red'					# Colour of data point outliers. 
@@ -238,10 +245,17 @@ fig, ax = plt.subplots(1,1, figsize=figure_size, tight_layout=True)		# Defining 
 # ADDING COUNTOURS - Comment this section out to remove contour lines from plot area.
 if chosen_plot == 4:																	# Reduced number of bins for Cis-Pro Ramachandran plot.
 	counts, discard1, discard2, discard3 = plt.hist2d(top8000_phipsi_dict.get(angle_type)[0],top8000_phipsi_dict.get(angle_type)[1], bins=45, norm=LogNorm(), alpha=0)
-	ax.contour(counts.transpose(), extent=[-180, 180, -180, 180], levels=[contour_level], linewidths=1, colors=[contour_line_color], zorder=2)
+	ax.contour(counts.transpose(), extent=[-180, 180, -180, 180], levels=[contour_level_inner], linewidths=1, colors=[contour_line_color_inner], zorder=2)
+
+	counts_v2, discard1, discard2, discard3 = plt.hist2d(top8000_phipsi_dict.get(angle_type)[0],top8000_phipsi_dict.get(angle_type)[1], bins=35, norm=LogNorm(), alpha=0)
+	ax.contour(counts_v2.transpose(), extent=[-180, 180, -180, 180], levels=[contour_level_outer], linewidths=1, colors=[contour_line_color_outer], zorder=2, alpha=contour_line_alpha_outer)
+
 else:
 	counts, discard1, discard2, discard3 = plt.hist2d(top8000_phipsi_dict.get(angle_type)[0],top8000_phipsi_dict.get(angle_type)[1], bins=90, norm=LogNorm(), alpha=0)
-	ax.contour(counts.transpose(), extent=[-180, 180, -180, 180], levels=[contour_level], linewidths=1, colors=[contour_line_color], zorder=2)
+	ax.contour(counts.transpose(), extent=[-180, 180, -180, 180], levels=[contour_level_inner], linewidths=1, colors=[contour_line_color_inner], zorder=2)
+
+	counts_v2, discard1, discard2, discard3 = plt.hist2d(top8000_phipsi_dict.get(angle_type)[0],top8000_phipsi_dict.get(angle_type)[1], bins=35, norm=LogNorm(), alpha=0)
+	ax.contour(counts_v2.transpose(), extent=[-180, 180, -180, 180], levels=[contour_level_outer], linewidths=1, colors=[contour_line_color_outer], zorder=2, alpha=contour_line_alpha_outer)
 
 # ADDING FAVOURED RAMACHANDRAN REGION IMAGE TO BACKGROUND 
 ax.imshow(plt.imread(rama_plot_name), extent=[-195, 195, -195, 195], zorder=1)
