@@ -63,7 +63,7 @@ To run both the DihedralCalculator and RamachandranPlotter in a single command:
 
 	python3 DihedralCalculator.py [file-name] && python3 RamachandranPlot.py [file-name] [plot-code]
 
-To generate several Ramachandran plots from using single command, use ```&&``` like so:
+To generate several Ramachandran plots using a single command, use ```&&``` like so:
 
 	python3 RamachandranPlot.py [file-name] [plot-code] && python3 RamachandranPlot.py [file-name] [plot-code] && python3 RamachandranPlot.py ...
 
