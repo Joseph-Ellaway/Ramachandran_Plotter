@@ -36,7 +36,7 @@ Phenix Suite (install [here](https://www.phenix-online.org/download/))
 	python3 DihedralCalculator.py [file-name]
 	python3 RamachandranPlot.py [file-name] [plot-code]
 
-where [file-name] is your PDB file name (include path if necessary). [plot-code] can be any of the following integers to determine the type of output plot desired:
+where ```[file-name]``` is your PDB file name (include path if necessary). ```[plot-code]``` can be any of the following integers to determine the type of output plot desired:
 
 - 0 = All angles 
 - 1 = General angles	(All angles excluding Gly, Pro, Ile and Val)
@@ -47,7 +47,7 @@ where [file-name] is your PDB file name (include path if necessary). [plot-code]
 - 6 = Pre-proline angles only (angles preceding a Pro residue)
 - 7 = Ile-Val angles only 
 
-The first command generates a CSV of your input peptides dihedral angles using the phenix.ramalyze function included in the Phenix Suite of 
+The first command generates a CSV of your input peptides dihedral angles using the ```phenix.ramalyze``` function included in the Phenix Suite of 
 structural tools. 
 
 The second command takes the CSV (where multiple peptides have had their dihedral angles calculated, the peptide PDB file name must also be given)
