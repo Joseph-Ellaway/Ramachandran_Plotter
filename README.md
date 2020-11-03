@@ -38,14 +38,14 @@ Phenix Suite (install [here](https://www.phenix-online.org/download/))
 
 where ```[file-name]``` is your PDB file name (include path if necessary). ```[plot-code]``` can be any of the following integers to determine the type of output plot desired:
 
-- 0 = All angles 
-- 1 = General angles	(All angles excluding Gly, Pro, Ile and Val)
-- 2 = Glycine angles only
-- 3 = Trans-proline angles only 
-- 4 = Cis-proline angles only 
-- 5 = Proline (cis/trans) angles only 
-- 6 = Pre-proline angles only (angles preceding a Pro residue)
-- 7 = Ile-Val angles only 
+- ```0``` = All angles 
+- ```1``` = General angles	(All angles excluding Gly, Pro, Ile and Val)
+- ```2``` = Glycine angles only
+- ```3``` = Trans-proline angles only 
+- ```4``` = Cis-proline angles only 
+- ```5``` = Proline (cis/trans) angles only 
+- ```6``` = Pre-proline angles only (angles preceding a Pro residue)
+- ```7``` = Ile-Val angles only 
 
 The first command generates a CSV of your input peptides dihedral angles using the ```phenix.ramalyze``` function included in the Phenix Suite of 
 structural tools. 
@@ -53,7 +53,7 @@ structural tools.
 The second command takes the CSV (where multiple peptides have had their dihedral angles calculated, the peptide PDB file name must also be given)
 and creates a Ramachandran plot. The type of plot returned is determined by the plot code. 
 
-Backgrounds to Ramachandran plots are generated using the results of phenix.ramalyze applied to all peptides from the Top8000 peptide database. 
+Backgrounds to Ramachandran plots are generated using the results of ```phenix.ramalyze``` applied to all peptides from the Top8000 peptide database. 
 These are peptides for which models have been solved at very high resolutions and dihedral angles are assumed to be at their true values. 
 
 Several parameters can be easily adjusted to change the appearence of the returned graph. 
@@ -83,9 +83,9 @@ To generate several Ramachandran plots using a single command, use ```&&``` like
 |Data point edge colour |data_point_edge_colour |Colour of the borders for data point colours (outlier and favoured).|
 
 \* options for sequential colour maps (recommended):
-['Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
+```['Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
 'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
-'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']
+'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']```
 
 
 ### Author Details
