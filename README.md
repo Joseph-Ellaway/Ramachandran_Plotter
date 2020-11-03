@@ -83,9 +83,10 @@ To generate several Ramachandran plots using a single command, use ```&&``` like
 |Data point edge colour |data_point_edge_colour |Colour of the borders for data point colours (outlier and favoured).|
 
 \* options for sequential colour maps (recommended):
-```['Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
-'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
-'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']```
+
+	['Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
+	'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
+	'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']
 
 
 ### Author Details
