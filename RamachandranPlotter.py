@@ -54,7 +54,7 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 	VerboseStatement(verb, 'Importing Top8000 library')
 
 	# Top8000 peptide dataset. Pre-analysed
-	top8000_df = pd.read_csv('Top8000_DihedralAngles.csv.gz', compression='gzip') 
+	top8000_df = pd.read_csv('Top8000_DihedralAngles.csv') 
 
 
 
