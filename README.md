@@ -1,7 +1,5 @@
 # Ramachandran Plotter (v2.0.2)
 
-## Update announcement
-The code base is currently being updated to remove the program's dependence on the Phenix suit. As of 01.07.2021, the README.md is out of date but a new version will be uploaded in the coming days. 
 
 ## Requirements:
 
@@ -22,21 +20,10 @@ Install with pip:
 
 	pip install numpy pandas matplotlib scipy biopython matplotlib math argparser 
 
-<<<<<<< HEAD
 
 ## Example Ouput Figures
 
 ## Run Instructions
-=======
-#### All angle plot 
-![](./example_plots/AllRamachangranPlot.png)
-
-#### Glycine only plot
-![](./example_plots/GlycineRamachangranPlot.png)
-
-#### Proline only plot
-![](./example_plots/ProlineRamachangranPlot.png)
->>>>>>> ad95adbefe0997511532561a48002d6b2517df26
 
 Minimal run example:
 
@@ -54,7 +41,6 @@ Optional arguments:
 
 ```--plot_type <int>``` can be any of the following integers to determine the type of output plot desired:
 
-<<<<<<< HEAD
 	0 	: All
 	1 	: General (All residues bar Gly, Pro, Ile, Val and pre-Pro)
 	2 	: Glycine
@@ -65,42 +51,14 @@ Optional arguments:
 Backgrounds to Ramachandran plots are generated using dihedral angle data from peptide structures solved at high resolution from the Top8000 peptide database. 
 
 These are peptides for which models have been solved at very high resolutions and dihedral angles are assumed to be at their true values. 
-=======
-where ```[file-name]``` is your PDB file name (include path if necessary). ```[plot-code]``` can be any of the following integers to determine the type of output plot desired:
-
-- ```0``` = All angles 
-- ```1``` = General angles	(All angles excluding Gly, Pro, Ile and Val)
-- ```2``` = Glycine angles only
-- ```3``` = Trans-proline angles only 
-- ```4``` = Cis-proline angles only 
-- ```5``` = Proline (cis/trans) angles only 
-- ```6``` = Pre-proline angles only (angles preceding a Pro residue)
-- ```7``` = Ile-Val angles only 
-
-The first command generates a CSV of your input peptides dihedral angles using the ```phenix.ramalyze``` function included in the Phenix Suite of 
-structural tools. 
->>>>>>> ad95adbefe0997511532561a48002d6b2517df26
 
 Several parameters can be easily adjusted to change the appearance of the returned graph. 
 
-<<<<<<< HEAD
 #### All angle plot 
-=======
-Backgrounds to Ramachandran plots are generated using the results of ```phenix.ramalyze``` applied to all peptides from the Top8000 peptide database. 
-These are peptides for which models have been solved at very high resolutions and dihedral angles are assumed to be at their true values. 
->>>>>>> ad95adbefe0997511532561a48002d6b2517df26
 
 	python RamachandranPlotter.py --pdb 6GVE.pbd --plot_type 0
 
 <img src="./example_plot/AllRamachandranPlot.png" style="zoom:35%;" />
-
-To run both the DihedralCalculator and RamachandranPlotter in a single command:
-
-	python3 DihedralCalculator.py [file-name] && python3 RamachandranPlot.py [file-name] [plot-code]
-
-To generate several Ramachandran plots using a single command, use ```&&``` like so:
-
-	python3 RamachandranPlot.py [file-name] [plot-code] && python3 RamachandranPlot.py [file-name] [plot-code] && python3 RamachandranPlot.py ...
 
 ## Adjustable Variables (recommended)
 
@@ -118,10 +76,9 @@ To generate several Ramachandran plots using a single command, use ```&&``` like
 |Data point edge colour |data_point_edge_colour |Colour of the borders for data point colours (outlier and favoured).|
 
 \* options for sequential colour maps (recommended):
-
-	['Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
-	'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
-	'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']
+['Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
+'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
+'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']
 
 Find a complete description of available colour maps and how to make your own at: <a href="https://matplotlib.org/stable/tutorials/colors/colormaps.html">https://matplotlib.org/stable/tutorials/colors/colormaps.html</a>
 
@@ -139,14 +96,3 @@ Joseph I. J. Ellaway
 josephellaway@gmail.com
 
 MSc Bioinformatics and Theoretical Systems Biology, Imperial College London
-<<<<<<< HEAD
-=======
-
-BSc Biochemistry with a Year in Research, Imperial College London
-
-
-## Acknowledgments
-Code was written for my undergraduate final year project report, supervised by Dr James W. Murray. 
-
-Example plots were generated using the GAPDH-CP12-PRK cryoEM structure from [McFarlane et. al. (2019)](https://www.pnas.org/content/116/42/20984)/[(PDB: 6GVE)](https://www.rcsb.org/structure/6GVE).
->>>>>>> ad95adbefe0997511532561a48002d6b2517df26
