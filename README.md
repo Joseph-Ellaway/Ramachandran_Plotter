@@ -1,5 +1,7 @@
 # Ramachandran Plotter
 
+## Update announcement
+The code base is currently being updated to remove the program's dependence on the Phenix suit. As of 01.07.2021, the README.md is out of date but a new version will be uploaded in the coming days. 
 
 ## Requirements:
 
