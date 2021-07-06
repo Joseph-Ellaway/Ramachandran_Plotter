@@ -18,7 +18,7 @@ Modules:
 
 Install with pip:
 
-	pip install numpy pandas matplotlib scipy biopython matplotlib math argparser 
+	pip install numpy pandas matplotlib scipy biopython matplotlib math argparser opencv-python
 
 
 ## Example Ouput Figures
