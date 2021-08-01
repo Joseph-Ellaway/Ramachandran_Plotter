@@ -21,8 +21,6 @@ Install with pip:
 	pip install numpy pandas matplotlib scipy biopython matplotlib argparse opencv-python
 
 
-## Example Ouput Figures
-
 ## Run Instructions
 
 Minimal run example:
