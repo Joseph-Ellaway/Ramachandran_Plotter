@@ -59,6 +59,17 @@ def SaveAndCloseFigure(out_file_name, resolution):			# dtypes : string, int
 	plt.close()
 
 
+def SelectAngles(df, plot_type):
+
+	if plot_type == 'All':
+		pass
+	elif plot_type == 'Proline':
+		df = df.loc[ (df['type'] == 'Trans-proline') | (df['type'] == 'Cis-proline') ]
+	else:
+		df = df.loc[df['type'] == plot_type]
+	return df
+
+
 
 def PhiPsiPlotter(phi_angles, psi_angles, figsize, file_name, background_colour):	# dtypes : array-like, 
 	'''
@@ -77,6 +88,7 @@ def PhiPsiPlotter(phi_angles, psi_angles, figsize, file_name, background_colour)
 	ax.set_axis_off()
 	ax.hist2d(phi_angles, psi_angles, **kwargs)
 	SaveAndCloseFigure(file_name, 80)
+
 
 
 
@@ -113,19 +125,8 @@ def MakeBackground(dihedral_df, plot_type, file_name, background_colour):
 	# Uses Top8000 DB
 	figure_size_background=(10,10)								# Does not change output image size. 
 
-	if plot_type == 'All':
-		pass
-
-	elif plot_type == 'Proline':
-		dihedral_df = dihedral_df.loc[(dihedral_df['type'] == 'Trans-proline') | dihedral_df['type'] == 'Cis-proline']
-
-	else:
-		dihedral_df = dihedral_df.loc[dihedral_df['type'] == plot_type]
-
 	file_name = str(file_name + '.png')
-
 	PhiPsiPlotter(dihedral_df['phi'], dihedral_df['psi'], figure_size_background, file_name, background_colour)
-
 	Smoother(file_name, figure_size_background, background_colour)
 
 

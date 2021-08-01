@@ -24,6 +24,7 @@
 # Base functions
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
 # Package functions
 from DihedralCalculator import *
@@ -31,7 +32,7 @@ from PlotterFunctions import *
 from RamaArgumentParser import *
 
 # Main function
-def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, save):
+def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, save, file_type):
 
 	########################################################
 	#				IMPORTING USER DATA					   #
@@ -43,8 +44,8 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 
 	# Selecting user's desired Ramachandran plot
 	options = ['All', 'General', 'Glycine', 'Proline', 'Pre-proline', 'Ile-Val'] # Available Ramachandran plots
-	plot_type = options[int(plot_type)]								  # User input determines what Ramachandran background is plotted. 
-	plot_name = str(out_dir + plot_type + 'RamachandranPlot')	  # Out file name
+	plot_type = options[int(plot_type)]								 			 # User input determines what Ramachandran background is plotted. 
+	plot_name = str(out_dir + '/' + pdb[:-4] + '_' + plot_type + 'RamachandranPlot' + '_tmp')	  # Out file name
 
 
 
@@ -54,7 +55,7 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 	VerboseStatement(verb, 'Importing Top8000 library')
 
 	# Top8000 peptide dataset. Pre-analysed
-	top8000_df = pd.read_csv('Top8000_DihedralAngles.csv') 
+	top8000_df = SelectAngles(pd.read_csv('Top8000_DihedralAngles.csv.gz', compression='gzip'), plot_type)
 
 
 
@@ -73,7 +74,7 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 	#				SAVING USER DATA (optional)			   #
 
 	if save:
-		csv_file_name = str(plot_name + '.csv')
+		csv_file_name = str(plot_name[:-4] + '.csv')
 		VerboseStatement(verb, str('Saving CSV as: ' + csv_file_name))
 		userpdb_df.to_csv(csv_file_name, index=False)
 
@@ -93,10 +94,10 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 	contour_level_outer = 15				# Percentile of dihedral angles for outer contour lines
 	contour_line_color_inner = '#DFF8FB'	# Inner contour line colour.
 	contour_line_color_outer = '#045E93'	# Colour of outer contour lines
-	out_resolution = 200					# Output figure resolution. Not required if saving file as PDF
+	out_resolution = 96					# Output figure resolution. Not required if saving file as PDF
 	data_point_colour = '#D4AB2D'			# Colour of data points for each Phi-Psi dihedral angle pair. 
 	data_point_edge_colour = '#3c3c3c'		# Colour of data point's border.
-	background_colour = 'Blues'				# Colour map of background plot. Refer to https://matplotlib.org/stable/tutorials/colors/colormaps.html for colormap options
+	background_colour = 'Greens'				# Colour map of background plot. Refer to https://matplotlib.org/stable/tutorials/colors/colormaps.html for colormap options
 
 	# Plotting background
 	VerboseStatement(verb, 'Generating background of favoured regions')
@@ -129,16 +130,23 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 	# SAVING RAMACHANDRAN PLOT AS PNG IMAGE
 	VerboseStatement(verb, 'Saving plot')
 
-	# ... as PNG
-	plt.savefig(str(plot_name + '.png'), dpi=out_resolution, bbox_inches=0, pad_inches=None)
+	if file_type == 'png':
 
-	# ... as PDF
-	plt.savefig(str(plot_name + '.pdf'), bbox_inches=0, pad_inches=None)
+		# ... as PNG
+		plt.savefig(str(plot_name[:-4] + '.png'), dpi=out_resolution, bbox_inches=0, pad_inches=None)
+
+	else:
+		# ... as PDF
+		plt.savefig(str(plot_name[:-4] + '.' + file_type), bbox_inches=0, pad_inches=None)
+	
+	rm_command = str('rm ' + plot_name + '.png')
+	os.system(rm_command)
+
 	plt.close()
 
 	# plt.show()
 
-	print('Done. \n Ramachandran plot saved to', str(plot_name + '.png'))
+	print('Done. \n Ramachandran plot saved to', str(plot_name[:-4] + '.' + file_type))
 
 
 
@@ -150,9 +158,9 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 if __name__ == "__main__":
 
 	# Loading user's input arguments
-	pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, save = CollctUserArgs()
+	pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, save, file_type = CollctUserArgs()
 
-	main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, save)
+	main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, save, file_type)
 
 else:
 	pass
