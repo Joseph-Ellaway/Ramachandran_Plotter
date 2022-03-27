@@ -1,6 +1,6 @@
 
 """
-	=====================================================================================
+	====================================================================================
 	Plots the frequency density of the dihedral (torsion/Ramachandran) angles from the 
 	Top8000 peptide database as a smoothed background histogram, along with two contour 
 	lines. 
@@ -104,7 +104,7 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 	contour_level_outer = 15				# Percentile of dihedral angles for outer contour lines
 	contour_line_color_inner = "#DFF8FB"	# Inner contour line colour.
 	contour_line_color_outer = "#045E93"	# Colour of outer contour lines
-	out_resolution = 96					# Output figure resolution. Not required if saving file as PDF
+	out_resolution = 96						# Output figure resolution. Not required if saving file as PDF
 	data_point_colour = "#D4AB2D"			# Colour of data points for each Phi-Psi dihedral angle pair. 
 	data_point_edge_colour = "#3c3c3c"		# Colour of data point's border.
 	background_colour = "Blues"				# Colour map of background plot. Refer to https://matplotlib.org/stable/tutorials/colors/colormaps.html for colormap options
@@ -132,7 +132,8 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 	AddGridLines(ax)
 
 	# PLOTTING USER'S DIHEDRAL ANGLE DATA
-	ax.scatter(userpdb_df["phi"], userpdb_df["psi"], s=15, color=data_point_colour, zorder=4, linewidths=0.5, edgecolor=data_point_edge_colour)
+	ax.scatter(userpdb_df["phi"], userpdb_df["psi"], s=15, color=data_point_colour, 
+							zorder=4, linewidths=0.5, edgecolor=data_point_edge_colour)
 
 	# AXES AESTHETICS/FEATURES
 	FormatAxis(ax)
