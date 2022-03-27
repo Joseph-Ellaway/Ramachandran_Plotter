@@ -29,13 +29,13 @@ Minimal run example:
 
 Optional arguments:
 
-	--help				: Prints summary of arguments
-	--verbose			: Increase output verbosity
+	--help			: Prints summary of arguments
+	--verbose		: Increase output verbosity
 	--models <int>		: Desired model number (default = use all models). Model number corresponds to order in PDB file.
 	--chains <int>		: Desired chain number (default = use all chains). Chain number corresponds to order in PDB file.
 	--out_dir <path>	: Out directory. Must be available before-hand.
-	--plot_type	<int>	: Type of angles plotted Ramachandran diagram. Options detailed below.
-	--save_csv			: Saves calculated dihedral angles in a separate CSV file.
+	--plot_type <int>	: Type of angles plotted Ramachandran diagram. Options detailed below.
+	--save_csv		: Saves calculated dihedral angles in a separate CSV file.
 
 ```--plot_type <int>``` can be any of the following integers to determine the type of output plot desired:
 
@@ -88,7 +88,20 @@ The dependence previous versions of Ramachandran-Plotter had on Phenix has been 
 
 
 
-## Bug fixes: 01/08/2021
+## Bug fixes:
+
+### 27/03/2022
+
+- Improved readability:
+  - Better comment brevity 
+  - Majority of code fit within column width of 88, where possible/appropriate
+
+Crash fixes:
+
+- Replaced LaTeX package implementation from Matplotlib (for rendering phi and psi symbols) with unicode chars. 
+
+### 01/08/2021
+
 Crash fixes:
  - Top8000 file decompression error has been fixed. 
  - Plotting Proline-only plots has been patched. 
