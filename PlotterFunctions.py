@@ -26,10 +26,6 @@ import matplotlib.pyplot as plt
 from matplotlib import colors
 from matplotlib.colors import LogNorm
 
-# LaTeX functionality
-import matplotlib
-matplotlib.rcParams['text.usetex'] = True		# Enable LaTeX in annotations. 
-matplotlib.rcParams['text.latex.preamble'] = r'\usepackage{siunitx} \sisetup{detect-all} \usepackage{helvet} \usepackage{sansmath} \sansmath' # Sans-serif math
 
 # Removes qt5ct messages. Comment out to debug
 os.environ['QT_LOGGING_RULES']="qt5ct.debug=false"
@@ -172,8 +168,8 @@ def FormatAxis(axis):
 
 	axis.set_xlim((-180, 180))
 	axis.set_ylim((-180, 180))
-	axis.set_xlabel(r'$\phi \ (\si{\degree})$')
-	axis.set_ylabel(r'$\psi \ (\si{\degree})$')
+	axis.set_xlabel(u"\u03A6 (\u00B0)")	# phi
+	axis.set_ylabel(u"\u03A8 (\u00B0)")	# psi
 	ax_linewidth = 2
 	axis.spines['left'].set_linewidth(ax_linewidth)
 	axis.spines['bottom'].set_linewidth(ax_linewidth)
