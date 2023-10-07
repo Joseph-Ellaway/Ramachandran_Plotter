@@ -25,15 +25,17 @@
 	====================================================================================
 """
 
+import os
+
+import matplotlib.pyplot as plt
 # Base functions
 import pandas as pd
-import matplotlib.pyplot as plt
-import os
 
 # Package functions
 from DihedralCalculator import *
 from PlotterFunctions import *
 from RamaArgumentParser import *
+
 
 # Main function
 def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, save, file_type):
@@ -150,8 +152,7 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 		# ... as PDF
 		plt.savefig(str(plot_name[:-4] + '.' + file_type), bbox_inches=0, pad_inches=None)
 	
-	rm_command = str("rm " + plot_name + ".png")
-	os.system(rm_command)
+	os.remove(str(plot_name + '.png'))
 
 	plt.close()
 
