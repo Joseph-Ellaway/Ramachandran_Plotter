@@ -119,7 +119,7 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 	# Plotting user's PDB dihedral angles
 	VerboseStatement(verb, "Plotting Ramachandran diagram")
 
-	plt.style.use("seaborn-poster")
+	plt.style.use("seaborn-v0_8-poster")
 
 	fig, ax = plt.subplots(1,1, figsize=figure_size, tight_layout=True)		# Defining plot area. 
 
