@@ -90,6 +90,15 @@ The dependence previous versions of Ramachandran-Plotter had on Phenix has been 
 
 ## Bug fixes:
 
+### 07/10/2023
+
+Crash fixes:
+ - Dataframe.append(...) is deprecated since pandas 2.0, replaced by pandas.concat(...)
+ - Matplotlib style *seaborn-poster* was renamed *seaborn-v0_8-poster* since 3.6.3 version
+
+Bug fixes:
+ - Temporary png image was not deleted on Windows, replace *os.command()* by *os.remove()*
+
 ### 27/03/2022
 
 - Improved readability:

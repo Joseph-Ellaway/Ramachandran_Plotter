@@ -21,13 +21,14 @@
 
 # Removes warning messages from Biopython. Comment out to debug
 import warnings
+
 warnings.filterwarnings("ignore")
 
-import Bio.PDB
-import pandas as pd
-import numpy as np
 import math
 
+import Bio.PDB
+import numpy as np
+import pandas as pd
 
 
 def ResidueNames(chain):
@@ -232,13 +233,13 @@ def ModelDihedrals(model, model_num, iter_chains=True, chain_id=None):
 
 		for chain in model:
 			chain_summaryDF = ChainSummary(chain)
-			model_summaryDF = model_summaryDF.append(chain_summaryDF, ignore_index=True)
+			model_summaryDF = pd.concat([model_summaryDF, chain_summaryDF], ignore_index=True)
 
 	# If multiple chains are present, default: calculate dihedrals from all chains
 	else:
 		chain = model[chain_id]
 		chain_summaryDF = ChainSummary(chain)
-		model_summaryDF = model_summaryDF.append(chain_summaryDF, ignore_index=True)
+		model_summaryDF = pd.concat([model_summaryDF, chain_summaryDF], ignore_index=True)
 
 	# Append model number information to final DataFrame
 	model_ID_list = [model_num] * len(model_summaryDF)
@@ -275,7 +276,7 @@ def ExtractDihedrals(pdb_file_name=None, iter_models=True, model_number=0,
 				for model in models:
 
 					model_dihedrals = ModelDihedrals(model, model_number, iter_chains, chain_id)
-					pdb_summaryDF = pdb_summaryDF.append(model_dihedrals, ignore_index=True)
+					pdb_summaryDF = pd.concat([pdb_summaryDF, model_dihedrals], ignore_index=True)
 
 					model_number += 1
 
@@ -284,7 +285,7 @@ def ExtractDihedrals(pdb_file_name=None, iter_models=True, model_number=0,
 				try:
 					model = Bio.PDB.PDBParser().get_structure(pdb_code, pdb_file_name)[model_number]
 					model_dihedrals = ModelDihedrals(model, model_number)
-					pdb_summaryDF = pdb_summaryDF.append(model_dihedrals, ignore_index=True)
+					pdb_summaryDF = pd.concat([pdb_summaryDF, model_dihedrals], ignore_index=True)
 				# Invalid model number given 
 				except:
 					inv_model = True
