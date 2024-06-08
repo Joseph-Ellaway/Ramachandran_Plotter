@@ -1,21 +1,21 @@
 
 """
 	====================================================================================
-	Plots the frequency density of the dihedral (torsion/Ramachandran) angles from the 
-	Top8000 peptide database as a smoothed background histogram, along with two contour 
-	lines. 
+	Plots the frequency density of the dihedral (torsion/Ramachandran) angles from the
+	Top8000 peptide database as a smoothed background histogram, along with two contour
+	lines.
 
-	The user's input peptide's dihedral angles are then added ontop of this background 
-	as a scatter plot. 
+	The user's input peptide's dihedral angles are then added ontop of this background
+	as a scatter plot.
 
-	Colours and recommended parameters can be easily adjusted towards the end of the 
-	script. 
-	
+	Colours and recommended parameters can be easily adjusted towards the end of the
+	script.
+
 	Version 2.0.1:
-	 - Relies on the easily accessible Biopython package, rather than Phenix as in 
+	 - Relies on the easily accessible Biopython package, rather than Phenix as in
 	   versions <2.0
 	 - User arguments can be now easily parsed in from the command line
-	 - If required, the script could be implemented into existing protein analysis 
+	 - If required, the script could be implemented into existing protein analysis
 	   pipelines by importing this function ( main() )
 
 	Author information:
@@ -45,16 +45,16 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 
 	VerboseStatement(verb, str("Importing " + str(pdb)) )
 
-	userpdb_df = ExtractDihedrals(pdb_file_name=pdb, iter_models=itmod, 
+	userpdb_df = ExtractDihedrals(pdb_file_name=pdb, iter_models=itmod,
 					model_number=model_num, iter_chains=itchain, chain_id=chain_num)
 	# Remove invalid dihedral angles/angles from ligands or non-canonical residues
 	userpdb_df = userpdb_df.dropna()
 
 	# Selecting user's desired Ramachandran plot
-	options = ["All", "General", "Glycine", "Proline", "Pre-proline", "Ile-Val"] 
+	options = ["All", "General", "Glycine", "Proline", "Pre-proline", "Ile-Val"]
 									# Available plots
 	# User input determines background
-	plot_type = options[int(plot_type)]				
+	plot_type = options[int(plot_type)]
 	# Out file name
 	plot_name = str(out_dir + '/' + pdb[:-4] + '_' + plot_type + "RamachandranPlot_tmp")
 
@@ -66,7 +66,7 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 	VerboseStatement(verb, "Importing Top8000 library")
 
 	# Top8000 peptide dataset. Pre-analysed
-	top8000_df = SelectAngles(pd.read_csv("Top8000_DihedralAngles.csv.gz", compression="gzip"), 
+	top8000_df = SelectAngles(pd.read_csv("Top8000_DihedralAngles.csv.gz", compression="gzip"),
 								plot_type)
 
 
@@ -100,14 +100,14 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 	########################################################
 	#					PLOTTING DATA					   #
 
-	# Recommended adjustable parameters. 
+	# Recommended adjustable parameters.
 	figure_size = (5,5)						# Output figure size in inches.
 	contour_level_inner = 96				# Percentile of dihedral angles for inner contour lines (e.g. contour_level=96 means the area bounded by the contour line represents the range of angles in which 96% of all dihedral from the Top800 peptide DB fall within).
 	contour_level_outer = 15				# Percentile of dihedral angles for outer contour lines
 	contour_line_color_inner = "#DFF8FB"	# Inner contour line colour.
 	contour_line_color_outer = "#045E93"	# Colour of outer contour lines
 	out_resolution = 96						# Output figure resolution. Not required if saving file as PDF
-	data_point_colour = "#D4AB2D"			# Colour of data points for each Phi-Psi dihedral angle pair. 
+	data_point_colour = "#D4AB2D"			# Colour of data points for each Phi-Psi dihedral angle pair.
 	data_point_edge_colour = "#3c3c3c"		# Colour of data point's border.
 	background_colour = "Blues"				# Colour map of background plot. Refer to https://matplotlib.org/stable/tutorials/colors/colormaps.html for colormap options
 
@@ -121,20 +121,20 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 
 	plt.style.use("seaborn-v0_8-poster")
 
-	fig, ax = plt.subplots(1,1, figsize=figure_size, tight_layout=True)		# Defining plot area. 
+	fig, ax = plt.subplots(1,1, figsize=figure_size, tight_layout=True)		# Defining plot area.
 
 	# ADDING COUNTOURS - Comment this section out to remove contour lines from plot area.
 	AddContour(ax, top8000_df, contour_level=contour_level_inner, line_colour=contour_line_color_inner)
 	AddContour(ax, top8000_df, contour_level=contour_level_outer, line_colour=contour_line_color_outer, contour_alpha=0.3)
 
-	# ADDING FAVOURED RAMACHANDRAN REGION IMAGE TO BACKGROUND 
+	# ADDING FAVOURED RAMACHANDRAN REGION IMAGE TO BACKGROUND
 	ax.imshow(plt.imread(str(plot_name + ".png")), extent=[-195, 195, -195, 195], zorder=1)
 
 	# ADDING GRIDLINES
 	AddGridLines(ax)
 
 	# PLOTTING USER'S DIHEDRAL ANGLE DATA
-	ax.scatter(userpdb_df["phi"], userpdb_df["psi"], s=15, color=data_point_colour, 
+	ax.scatter(userpdb_df["phi"], userpdb_df["psi"], s=15, color=data_point_colour,
 							zorder=4, linewidths=0.5, edgecolor=data_point_edge_colour)
 
 	# AXES AESTHETICS/FEATURES
@@ -151,7 +151,7 @@ def main(pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, verb, sa
 	else:
 		# ... as PDF
 		plt.savefig(str(plot_name[:-4] + '.' + file_type), bbox_inches=0, pad_inches=None)
-	
+
 	os.remove(str(plot_name + '.png'))
 
 	plt.close()

@@ -1,14 +1,14 @@
-""" 
+"""
 	====================================================================================
-	If running script from the command line, functions here are called to parsed user's 
+	If running script from the command line, functions here are called to parsed user's
 	arguments into the main() function in RamachandranPlotter.py.
-	
+
 	Version 2.0.1:
-	 - Relies on the easily accessible Biopython package, rather than Phenix as in 
+	 - Relies on the easily accessible Biopython package, rather than Phenix as in
 	   versions <2.0
-	 - User arguments can be now easily parsed in from the command line (as facilitated 
+	 - User arguments can be now easily parsed in from the command line (as facilitated
 	   by functions here)
-	 - If required, the script could be implemented into existing protein analysis 
+	 - If required, the script could be implemented into existing protein analysis
 	   pipelines by importing this function ( main() ).
 
 	Author information:
@@ -25,7 +25,7 @@ import argparse
 def CollctUserArgs():
 	"""
 	====================================================================================
-	When called, function collects input arguments from the command line. Outputs 
+	When called, function collects input arguments from the command line. Outputs
 	variables to be used by main()
 	====================================================================================
 	"""
@@ -36,37 +36,37 @@ def CollctUserArgs():
 	parser.add_argument("-v", "--verbose", help="Increase output verbosity",
 	                    action="store_true")
 
-	parser.add_argument("-p", "--pdb", 
+	parser.add_argument("-p", "--pdb",
 						help="PDB file name: <filename.pdb>. Include path if necessary.",
 						type=str)
 
-	parser.add_argument("-m", "--models", 
+	parser.add_argument("-m", "--models",
 						help="Desired model number (default: all models). Model number corresponds to order in PDB file.",
 						type=int)
 
-	parser.add_argument("-c", "--chains", 
+	parser.add_argument("-c", "--chains",
 						help="Desired chain number (default: all chains). Chain number corresponds to order in PDB file.",
 						type=int)
 
-	parser.add_argument("-d", "--out_dir", 
+	parser.add_argument("-d", "--out_dir",
 						help="Out directory. Must be available before-hand.",
                     	type=str)
 
-	parser.add_argument("-t", "--plot_type", 
+	parser.add_argument("-t", "--plot_type",
 						help="Type of angles plotted on Ramachandran diagram. Refer to README.md for options and details.",
 	                    type=int)
 
-	parser.add_argument("-f", "--file_type", 
+	parser.add_argument("-f", "--file_type",
 						help="File type for output plot. Options: PNG (default, 96 dpi), PDF, SVG, EPS and PS.",
 						type=str)
 
-	parser.add_argument("-s", "--save_csv", 
+	parser.add_argument("-s", "--save_csv",
 						help="Save calculated dihedral angles in separate CSV.",
 	                    action="store_true")
 
 	args = parser.parse_args()
 
-	# Analysing arguments 
+	# Analysing arguments
 	if not args.models:			# Iterate models?
 		model_num = 0
 		itmod = True

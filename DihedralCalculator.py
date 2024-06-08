@@ -1,15 +1,15 @@
 
-""" 
+"""
 	====================================================================================
-	Functions here are called by main() to created a Pandas DataFrame of dihedral angle 
-	information from a given PDB file. Functions can also be used elsewhere for 
-	standalone use. 
-	
+	Functions here are called by main() to created a Pandas DataFrame of dihedral angle
+	information from a given PDB file. Functions can also be used elsewhere for
+	standalone use.
+
 	Version 2.0.1:
-	 - Relies on the easily accessible Biopython package, rather than Phenix as in 
+	 - Relies on the easily accessible Biopython package, rather than Phenix as in
 	   versions <2.0 (as facilitated by functions here)
 	 - User arguments can be now easily parsed in from the command line
-	 - If required, the script could be implemented into existing protein analysis 
+	 - If required, the script could be implemented into existing protein analysis
 	   pipelines by importing this function ( main() ).
 
 	Author information:
@@ -34,7 +34,7 @@ import pandas as pd
 def ResidueNames(chain):
 	"""
 	====================================================================================
-	Takes a Biopython PDB polypeptide object and returns a two lists: residue names and 
+	Takes a Biopython PDB polypeptide object and returns a two lists: residue names and
 	their position indices
 	====================================================================================
 	"""
@@ -78,7 +78,7 @@ def ToDegrees(radian_list):
 def CalcDihedrals(polypep):
 	"""
 	====================================================================================
-	Takes a Biopython polypeptide object and returns two lists of: Phi angles and Psi 
+	Takes a Biopython polypeptide object and returns two lists of: Phi angles and Psi
 	angles
 	====================================================================================
 	"""
@@ -106,15 +106,15 @@ def CalcDihedrals(polypep):
 def AminoAcidType(residue_names):
 	"""
 	====================================================================================
-	Takes a list of residue names (3-letter codes) and classifies them into one of six 
+	Takes a list of residue names (3-letter codes) and classifies them into one of six
 	categories:
 		- Glycine
 		- Proline
 		- Isoleucine/valine
 		- Pre-proline (any residue preceeding a Pro)
 		- General (any canonical residue that is not classified by the above)
-	Outputs a list of class types, length is equal to input list. Invalid residues are 
-	classed as NaN. 
+	Outputs a list of class types, length is equal to input list. Invalid residues are
+	classed as NaN.
 	====================================================================================
 	"""
 
@@ -135,7 +135,7 @@ def AminoAcidType(residue_names):
 			aa = aa.upper()
 
 		# Check if the residue is a canonical amino acid -- ligands should not be parsed
-		if aa in ["MET", "SER", "ASN", "LEU", "GLU", "LYS", "GLN", "ILE", "ALA", "ARG", 
+		if aa in ["MET", "SER", "ASN", "LEU", "GLU", "LYS", "GLN", "ILE", "ALA", "ARG",
 				"HIS", "CYS", "ASP", "THR", "GLY", "TRP", "PHE", "TYR", "PRO", "VAL"]:
 
 			# Glycine check
@@ -152,8 +152,8 @@ def AminoAcidType(residue_names):
 			# General check
 			elif aa not in ["GLY", "PRO", "ILE", "VAL"]:
 				aa_type = "General"
-			
-			# Entry is invalid 
+
+			# Entry is invalid
 			else:
 				aa_type = np.nan
 
@@ -167,7 +167,7 @@ def AminoAcidType(residue_names):
 				pass
 		else:
 			aa_type = np.nan
-			
+
 
 		residue_types.append(aa_type)
 		count += 1
@@ -179,7 +179,7 @@ def AminoAcidType(residue_names):
 def ChainSummary(polypep):
 	"""
 	====================================================================================
-	Returns relevant information on a Biopython polypeptide object for downstream 
+	Returns relevant information on a Biopython polypeptide object for downstream
 	processing:
 		- Phi/Psi angles
 		- Residue names/position indices
@@ -193,7 +193,7 @@ def ChainSummary(polypep):
 	chain_phis, chain_psis = CalcDihedrals(polypep)
 
 	# Return residue names and position indices within polypeptide chain
-	chain_resnames, chain_resindices = ResidueNames(polypep) 
+	chain_resnames, chain_resindices = ResidueNames(polypep)
 
 	# Return the type of the amino acid
 	chain_types = AminoAcidType(chain_resnames)
@@ -220,13 +220,13 @@ def ChainSummary(polypep):
 def ModelDihedrals(model, model_num, iter_chains=True, chain_id=None):
 	"""
 	====================================================================================
-	Generates a Pandas DataFrame of phi/psi angles (and other information) from a given 
-	PDB model 
+	Generates a Pandas DataFrame of phi/psi angles (and other information) from a given
+	PDB model
 	====================================================================================
 	"""
 
 	model_summaryDF = pd.DataFrame(columns=["chainID","residueName","residueIndex",
-																	"phi","psi","type"])	
+																	"phi","psi","type"])
 
 	# Iterate over all chains in model
 	if iter_chains:
@@ -249,12 +249,12 @@ def ModelDihedrals(model, model_num, iter_chains=True, chain_id=None):
 
 
 
-def ExtractDihedrals(pdb_file_name=None, iter_models=True, model_number=0, 
+def ExtractDihedrals(pdb_file_name=None, iter_models=True, model_number=0,
 													iter_chains=True, chain_id=None):
 	"""
 	====================================================================================
-	Generates a Pandas DataFrame of phi/psi angles (and other information) from a given 
-	PDB file 
+	Generates a Pandas DataFrame of phi/psi angles (and other information) from a given
+	PDB file
 	====================================================================================
 	"""
 	inv_model = False
@@ -286,7 +286,7 @@ def ExtractDihedrals(pdb_file_name=None, iter_models=True, model_number=0,
 					model = Bio.PDB.PDBParser().get_structure(pdb_code, pdb_file_name)[model_number]
 					model_dihedrals = ModelDihedrals(model, model_number)
 					pdb_summaryDF = pd.concat([pdb_summaryDF, model_dihedrals], ignore_index=True)
-				# Invalid model number given 
+				# Invalid model number given
 				except:
 					inv_model = True
 					print("\n  ERROR: Invalid model number entered \n")
