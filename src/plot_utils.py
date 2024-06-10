@@ -34,11 +34,9 @@ os.environ["QT_LOGGING_RULES"]="qt5ct.debug=false"
 
 # Change to suit taste
 
-def AxesRemover(mpl_axis):
+def remove_axis_visibility(mpl_axis):
 	"""
-	=========================================================
 	Removes axes and tick marks from a given Matplotlib axis.
-	=========================================================
 	"""
 	mpl_axis.set_frame_on(False)
 	mpl_axis.get_xmpl_axis().tick_bottom()
@@ -49,16 +47,14 @@ def AxesRemover(mpl_axis):
 
 def SaveAndCloseFigure(out_file_name, resolution):			# dtypes : string, int
 	"""
-	====================================================================================
 	Saves the plot area (defined before function called) as a PNG image to given file
 	name and resolution.
-	====================================================================================
 	"""
 	plt.savefig(out_file_name, dpi=resolution, bbox_inches=0, pad_inches=None)
 	plt.close()
 
 
-def SelectAngles(df, plot_type):
+def select_angles(df, plot_type):
 
 	if plot_type == "All":
 		pass
@@ -70,12 +66,10 @@ def SelectAngles(df, plot_type):
 
 
 
-def PhiPsiPlotter(phi_angles, psi_angles, figsize, file_name, background_colour):	# dtypes : array-like,
+def plot_phi_psi(phi_angles, psi_angles, figsize, file_name, background_colour):	# dtypes : array-like,
 	"""
-	====================================================================================
 	Creates a 2D histogram (Ramachandran plot) of out of phi and psi angles from the
 	Top8000 peptide DB.
-	====================================================================================
 	"""
 	fig, ax = plt.subplots(1,1, figsize=figsize, tight_layout=True)
 	fig.patch.set_visible(False)
@@ -92,71 +86,82 @@ def PhiPsiPlotter(phi_angles, psi_angles, figsize, file_name, background_colour)
 
 
 
-def Smoother(file_name, figsize, background_colour):
+def smooth(file_name, figsize, background_colour, bkgd_resolution = 96):
 	"""
-	====================================================================================
 	Reads a given pixelated image (passed into function as the file name as a string)
 	and "smoothes" it out to create an unpixelated version.
 	The unpixelated ("smoothed") version is then saved to ~/your_current_dir,
 	overwriting the pixelated input image.
-	====================================================================================
 	"""
 	fig, ax = plt.subplots(1,1, figsize=figsize, tight_layout=True)
 	fig.patch.set_visible(False)
 	kwargs = {
 		"cmap" : str(background_colour + "_r"),
-		"alpha" : 1}
+		"alpha" : 1
+	}
 	ax.set_axis_off()
 	rama_plot = cv2.imread(file_name, 0)
 	blurred_rama_plot = ndimage.gaussian_filter(rama_plot, sigma=0.3)
 	smoothed_rama_plot = ndimage.percentile_filter(blurred_rama_plot, percentile=90, size=20)
 	ax.imshow(smoothed_rama_plot, **kwargs)
-	bkgd_resolution = 96									# Adjust integer to change background resolution (higher = better quality but slower run time)
+
+	# Adjust integer to change background resolution (higher = better quality but slower run time)
+
 	SaveAndCloseFigure(file_name, bkgd_resolution)
 	plt.close()
 
 
 
-def MakeBackground(dihedral_df, plot_type, file_name, background_colour):
+def render_background(dihedral_df, plot_type, file_name, background_colour):
 	"""
-	====================================================================================
 	Reads a given pixelated image (passed into function as the file name as a string)
 	and "smoothes" it out to create an unpixelated version.
 	The unpixelated ("smoothed") version is then saved to ~/your_current_dir,
 	overwriting the pixelated input image.
-	====================================================================================
 	"""
 	# Uses Top8000 DB
 	figure_size_background=(10,10)					# Does not change output image size.
 
 	file_name = str(file_name + ".png")
-	PhiPsiPlotter(dihedral_df["phi"], dihedral_df["psi"], figure_size_background,
-														file_name, background_colour)
-	Smoother(file_name, figure_size_background, background_colour)
+	plot_phi_psi(
+		dihedral_df["phi"],
+		dihedral_df["psi"],
+		figure_size_background,
+		file_name,
+		background_colour
+	)
+	smooth(file_name, figure_size_background, background_colour)
 
 
 
-def AddContour(axis, df, contour_level, line_colour, contour_alpha=1):
+def add_contour(axis, df, contour_level, line_colour, contour_alpha=1):
 	"""
-	===============================================================
 	Appends contour lines to a given axis based on phi/psi angles.
-	===============================================================
 	"""
 
-	counts, discard1, discard2, discard3 = plt.hist2d(df["phi"],df["psi"], bins=90,
-																norm=LogNorm(), alpha=0)
+	counts, _, _, _ = plt.hist2d(
+		df["phi"],
+		df["psi"],
+		bins=90,
+		norm=LogNorm(),
+		alpha=0
+	)
 
-	axis.contour(counts.transpose(), extent=[-180, 180, -180, 180],
-							levels=[contour_level], linewidths=1, colors=[line_colour],
-							zorder=2, alpha=contour_alpha)
+	axis.contour(
+		counts.transpose(),
+		extent=[-180, 180, -180, 180],
+		levels=[contour_level],
+		linewidths=1,
+		colors=[line_colour],
+		zorder=2,
+		alpha=contour_alpha
+	)
 
 
 
-def AddGridLines(axis):
+def add_grid_lines(axis):
 	"""
-	==============================
 	Appends grid lines to an axis.
-	==============================
 	"""
 
 	# AESTHETIC CHOICES
@@ -172,15 +177,15 @@ def AddGridLines(axis):
 	axis.vlines(0, -180, 180, **zero_lines_kwargs)
 
 
-def FormatAxis(axis):
+def extra_formatting(axis):
 	"""
-	=========================================
 	Adds aesthetic features to a given axis.
-	=========================================
 	"""
 
-	axis.set_xlim((-180, 180))
-	axis.set_ylim((-180, 180))
+	limits = (-180, 180)
+
+	axis.set_xlim(limits)
+	axis.set_ylim(limits)
 	axis.set_xlabel(u"\u03A6 (\u00B0)")	# phi
 	axis.set_ylabel(u"\u03A8 (\u00B0)")	# psi
 	ax_linewidth = 2

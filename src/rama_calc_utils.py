@@ -31,12 +31,10 @@ import numpy as np
 import pandas as pd
 
 
-def ResidueNames(chain):
+def residue_names(chain):
 	"""
-	====================================================================================
 	Takes a Biopython PDB polypeptide object and returns a two lists: residue names and
 	their position indices
-	====================================================================================
 	"""
 
 	# Initialising output lists
@@ -53,11 +51,9 @@ def ResidueNames(chain):
 
 
 
-def ToDegrees(radian_list):
+def to_degrees(radian_list):
 	"""
-	===============================================
 	Converts a list of floats in radians to degrees
-	===============================================
 	"""
 
 	# Initialise output list
@@ -75,12 +71,10 @@ def ToDegrees(radian_list):
 
 
 
-def CalcDihedrals(polypep):
+def calculate_dihedrals(polypep):
 	"""
-	====================================================================================
 	Takes a Biopython polypeptide object and returns two lists of: Phi angles and Psi
 	angles
-	====================================================================================
 	"""
 
 	# Calculate dihedral angles for residues in polypeptide
@@ -95,17 +89,16 @@ def CalcDihedrals(polypep):
 		phis.append(angle_pair[0])
 		psis.append(angle_pair[1])
 
-	phis = ToDegrees(phis)
-	psis = ToDegrees(psis)
+	phis = to_degrees(phis)
+	psis = to_degrees(psis)
 
 	# Return phi and psi angles as separate list variables
 	return phis, psis
 
 
 
-def AminoAcidType(residue_names):
+def residue_type(residue_names):
 	"""
-	====================================================================================
 	Takes a list of residue names (3-letter codes) and classifies them into one of six
 	categories:
 		- Glycine
@@ -115,7 +108,6 @@ def AminoAcidType(residue_names):
 		- General (any canonical residue that is not classified by the above)
 	Outputs a list of class types, length is equal to input list. Invalid residues are
 	classed as NaN.
-	====================================================================================
 	"""
 
 	# Initialise output list
@@ -176,9 +168,8 @@ def AminoAcidType(residue_names):
 
 
 
-def ChainSummary(polypep):
+def chain_summary(polypep):
 	"""
-	====================================================================================
 	Returns relevant information on a Biopython polypeptide object for downstream
 	processing:
 		- Phi/Psi angles
@@ -186,17 +177,16 @@ def ChainSummary(polypep):
 		- Residue type
 		- Chain ID
 	in a Pandas DataFrame.
-	====================================================================================
 	"""
 
 	# Calculate dihedral angles in chain and add them to separate list variables
-	chain_phis, chain_psis = CalcDihedrals(polypep)
+	chain_phis, chain_psis = calculate_dihedrals(polypep)
 
 	# Return residue names and position indices within polypeptide chain
-	chain_resnames, chain_resindices = ResidueNames(polypep)
+	chain_resnames, chain_resindices = residue_names(polypep)
 
 	# Return the type of the amino acid
-	chain_types = AminoAcidType(chain_resnames)
+	chain_types = residue_type(chain_resnames)
 
 	# Generate chainID columns
 	chain_IDs = [polypep.id] * len(chain_phis)
@@ -217,12 +207,10 @@ def ChainSummary(polypep):
 
 
 
-def ModelDihedrals(model, model_num, iter_chains=True, chain_id=None):
+def get_model_dihedrals(model, model_num, iter_chains=True, chain_id=None):
 	"""
-	====================================================================================
 	Generates a Pandas DataFrame of phi/psi angles (and other information) from a given
 	PDB model
-	====================================================================================
 	"""
 
 	model_summaryDF = pd.DataFrame(columns=["chainID","residueName","residueIndex",
@@ -232,13 +220,13 @@ def ModelDihedrals(model, model_num, iter_chains=True, chain_id=None):
 	if iter_chains:
 
 		for chain in model:
-			chain_summaryDF = ChainSummary(chain)
+			chain_summaryDF = chain_summary(chain)
 			model_summaryDF = pd.concat([model_summaryDF, chain_summaryDF], ignore_index=True)
 
 	# If multiple chains are present, default: calculate dihedrals from all chains
 	else:
 		chain = model[chain_id]
-		chain_summaryDF = ChainSummary(chain)
+		chain_summaryDF = chain_summary(chain)
 		model_summaryDF = pd.concat([model_summaryDF, chain_summaryDF], ignore_index=True)
 
 	# Append model number information to final DataFrame
@@ -249,13 +237,11 @@ def ModelDihedrals(model, model_num, iter_chains=True, chain_id=None):
 
 
 
-def ExtractDihedrals(pdb_file_name=None, iter_models=True, model_number=0,
+def extract_dihedrals(pdb_file_name=None, iter_models=True, model_number=0,
 													iter_chains=True, chain_id=None):
 	"""
-	====================================================================================
 	Generates a Pandas DataFrame of phi/psi angles (and other information) from a given
 	PDB file
-	====================================================================================
 	"""
 	inv_model = False
 
@@ -275,7 +261,7 @@ def ExtractDihedrals(pdb_file_name=None, iter_models=True, model_number=0,
 
 				for model in models:
 
-					model_dihedrals = ModelDihedrals(model, model_number, iter_chains, chain_id)
+					model_dihedrals = get_model_dihedrals(model, model_number, iter_chains, chain_id)
 					pdb_summaryDF = pd.concat([pdb_summaryDF, model_dihedrals], ignore_index=True)
 
 					model_number += 1
@@ -284,7 +270,7 @@ def ExtractDihedrals(pdb_file_name=None, iter_models=True, model_number=0,
 			else:
 				try:
 					model = Bio.PDB.PDBParser().get_structure(pdb_code, pdb_file_name)[model_number]
-					model_dihedrals = ModelDihedrals(model, model_number)
+					model_dihedrals = get_model_dihedrals(model, model_number)
 					pdb_summaryDF = pd.concat([pdb_summaryDF, model_dihedrals], ignore_index=True)
 				# Invalid model number given
 				except:

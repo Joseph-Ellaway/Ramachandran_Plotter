@@ -1,4 +1,4 @@
-# Ramachandran Plotter (v2.0.2)
+# Ramachandran Plotter (v3.0.0)
 
 
 ## Requirements:
@@ -15,17 +15,30 @@ Modules:
 - OS
 - Argparse
 
-
+glpat-sxbjeFFh5tsiSw7526NY
 Install with pip:
 
 	pip install numpy pandas matplotlib scipy biopython matplotlib argparse opencv-python
 
 
+## New config file
+
+// Output figure size in inches.
+// Percentile of dihedral angles for inner contour lines (e.g. contour_level=96 means the area bounded by the contour line represents the range of angles in which 96% of all dihedral from the Top800 peptide DB fall within).
+// Percentile of dihedral angles for outer contour lines
+// Inner contour line colour.
+// Colour of outer contour lines
+// Output figure resolution. Not required if saving file as PDF
+// Colour of data points for each Phi-Psi dihedral angle pair.
+// Colour of data point's border.
+// Colour map of background plot. Refer to https://matplotlib.org/stable/tutorials/colors/colormaps.html for colormap options
+
 ## Run Instructions
 
 Minimal run example:
 
-	python RamachandranPlotter.py --pdb /path_to_file/<file-name.pdb>
+	<!-- python RamachandranPlotter.py --pdb /path_to_file/<file-name.pdb> -->
+	python run_ramachandran_plotter.py --pdb /path_to_file/<file-name.pdb>
 
 Optional arguments:
 

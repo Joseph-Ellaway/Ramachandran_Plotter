@@ -22,7 +22,7 @@ import argparse
 
 
 
-def CollctUserArgs():
+def collect_user_args():
 	"""
 	====================================================================================
 	When called, function collects input arguments from the command line. Outputs
@@ -115,18 +115,3 @@ def CollctUserArgs():
 		file_type = args.file_type.lower()
 
 	return args.pdb, itmod, model_num, itchain, chain_num, plot_type, out_dir, args.verbose, args.save_csv, file_type
-
-
-
-def VerboseStatement(verb_boolean, statement):
-	"""
-	=============================================================================
-	If first argument is true, function prints a given statement to command line.
-	=============================================================================
-	"""
-
-	if verb_boolean: 		# Parsed from argparser
-		print(statement)
-		# print("\n")
-	else:
-		pass

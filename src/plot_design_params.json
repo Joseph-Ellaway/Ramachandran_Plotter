@@ -1,0 +1,11 @@
+{
+    "figure_size": [5, 5],
+    "contour_level_inner": 96,
+    "contour_level_outer": 15,
+    "contour_line_color_inner": "#DFF8FB",
+    "contour_line_color_outer": "#045E93",
+    "out_resolution": 96,
+    "data_point_colour": "#D4AB2D",
+    "data_point_edge_colour": "#3c3c3c",
+    "background_colour": "Blues"
+}
