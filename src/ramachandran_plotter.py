@@ -39,6 +39,102 @@ from .argument_parser import *
 # Logging
 logger = logging.getLogger(__name__)
 
+
+
+def calculate_rama_angles(pdb_file, chain_id=None):
+    """
+    Calculate the phi and psi dihedral angles of a PDB file
+    """
+    # Extract dihedral angles
+    dihedral_angles = extract_dihedrals(
+        pdb_file_name=pdb_file,
+        chain_id=chain_id
+    )
+
+    # Remove invalid dihedral angles/angles from ligands or non-canonical residues
+    dihedral_angles = dihedral_angles.dropna()
+
+    return dihedral_angles
+
+
+
+
+class RamachandranPlotter:
+    """
+    Object to parse, calculate and plot Ramachandran angles from a collection of
+    structures
+    """
+
+    def __init__(
+            self,
+            input_structures,
+            output_dir,
+            plot_type,
+            filter_residue_type=None,
+            existing_rama_ditribution=None
+        ) -> None:
+
+        self.input_structures = input_structures
+        self.output_dir = output_dir
+        self.plot_type = plot_type
+
+
+    def read_structure_files(self):
+        """
+        Read in PDB/mmCIF files from a directory
+        """
+        pass
+
+    def filter_structure_residues(self):
+        """
+        OPTIONAL
+        Filter structures based on the given plot-type
+        """
+        pass
+
+    def calculate_dihedral_angles(self):
+        """
+        Calculate the phi and psi dihedral angles of the input structures
+        """
+        pass
+
+    def save_dihedral_angles(self):
+        """
+        OPTIONAL
+        Save the calculated dihedral angles to a CSV file
+        """
+        pass
+
+    def plot_ramachandran(self, image_format=["png"]):
+        """
+        Plot the Ramachandran plot of the calculated dihedral angles
+        """
+        pass
+
+    def open_background(self):
+        """
+        OPTIONAL
+        Open the pre-rendered background image of the Ramachandran plot
+        """
+        pass
+
+    def render_background(self, colour="Blues"):
+        """
+        OPTIONAL
+        Render the background of the Ramachandran plot
+        """
+        pass
+
+
+
+
+
+
+
+
+
+
+
 # Main function
 def main(
         pdb,
@@ -52,24 +148,19 @@ def main(
         file_type
     ):
 
-    ########################################################
-    #                IMPORTING USER DATA                       #
+    # Selecting user's desired Ramachandran plot
+    options = ["All", "General", "Glycine", "Proline", "Pre-proline", "Ile-Val"]
 
     logger.info(f"Importing structure data {pdb}")
 
     userpdb_df = extract_dihedrals(
         pdb_file_name=pdb,
-        iter_models=itmod,
-        model_number=model_num,
-        iter_chains=itchain,
         chain_id=chain_num
     )
     # Remove invalid dihedral angles/angles from ligands or non-canonical residues
     userpdb_df = userpdb_df.dropna()
 
-    # Selecting user's desired Ramachandran plot
-    options = ["All", "General", "Glycine", "Proline", "Pre-proline", "Ile-Val"]
-                                    # Available plots
+
     # User input determines background
     plot_type = options[int(plot_type)]
     # Out file name
