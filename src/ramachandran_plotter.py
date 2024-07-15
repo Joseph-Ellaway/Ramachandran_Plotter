@@ -1,13 +1,10 @@
-import os
 import matplotlib.pyplot as plt
 import pandas as pd
 import logging
 import json
 import pathlib
 import gemmi
-import sys
-from math import degrees
-import gemmi
+import tempfile
 
 # Package functions
 from .rama_calc_utils import *
@@ -19,204 +16,69 @@ logger = logging.getLogger(__name__)
 
 
 
-# Main function
-def main(
-        pdb,
-        itmod,
-        model_num,
-        itchain,
-        chain_num,
-        plot_type,
-        out_dir,
-        save,
-        file_type
+
+def render_background(
+        background_angles: np.array,
+        path_save: pathlib.Path|str,
+        **kwargs
     ):
-
-    # Selecting user's desired Ramachandran plot
-    options = ["All", "General", "Glycine", "Proline", "Pre-proline", "Ile-Val"]
-
-    logger.info(f"Importing structure data {pdb}")
-
-    userpdb_df = extract_dihedrals(
-        pdb_file_name=pdb,
-        chain_id=chain_num
-    )
-    # Remove invalid dihedral angles/angles from ligands or non-canonical residues
-    userpdb_df = userpdb_df.dropna()
-
-
-    # User input determines background
-    plot_type = options[int(plot_type)]
-    # Out file name
-    plot_name = str(out_dir + '/' + pdb[:-4] + '_' + plot_type + "RamachandranPlot_tmp")
-
-
-
-    ########################################################
-    #                IMPORTING REFERENCE DATA               #
-
-    logger.info("Importing Top8000 library")
-
-    # Top8000 peptide dataset. Pre-analysed
-    top8000_df = select_angles(
-			pd.read_csv(
-				"src/top8000_dihedrals.csv.gz",
-				compression="gzip"
-			),
-            plot_type
-        )
-
-
-
-    ########################################################
-    #                SELECTING RESIDUE TYPE DATA               #
-
-    if plot_type == "All":
-        pass
-
-    else:
-        userpdb_df = userpdb_df.loc[userpdb_df["type"] == plot_type]
-
-
-
-    ########################################################
-    #                SAVING USER DATA (optional)               #
-
-    if save:
-        csv_file_name = str(plot_name[:-4] + ".csv")
-        logger.info(f"Saving CSV as {csv_file_name}")
-        userpdb_df.to_csv(csv_file_name, index=False)
-
-
-    logger.info("Calculating Ramachandran angles")
-
-
-    ########################################################
-    #                    PLOTTING DATA                       #
-
-    # Open config file
-    with open("src/plot_design_params.json") as f:
-        plot_config = json.load(f)
-
-    # Plotting background
-    logger.info("Generating background of favoured regions")
-
-	# Genertating background: region of favoured dihedral angles
-    render_background(top8000_df, plot_type, plot_name, plot_config["background_colour"])
-
-    # Plotting user's PDB dihedral angles
-    logger.info("Plotting Ramachandran diagram")
-
-    plt.style.use("seaborn-v0_8-poster")
-
-    fig, ax = plt.subplots(1,1, figsize=plot_config["figure_size"], tight_layout=True)        # Defining plot area.
-
-    # ADDING COUNTOURS - Comment this section out to remove contour lines from plot area.
-    add_contour(
-        ax,
-        top8000_df,
-        contour_level=plot_config["contour_level_inner"],
-        line_colour=plot_config["contour_line_color_inner"]
-    )
-    add_contour(
-        ax,
-        top8000_df,
-        contour_level=plot_config["contour_level_outer"],
-        line_colour=plot_config["contour_line_color_outer"],
-        contour_alpha=0.3
-    )
-
-    # ADDING FAVOURED RAMACHANDRAN REGION IMAGE TO BACKGROUND
-    ax.imshow(
-        plt.imread(str(plot_name + ".png")),
-        extent=[-195, 195, -195, 195], zorder=1
-    )
-
-    # ADDING GRIDLINES
-    add_grid_lines(ax)
-
-    # PLOTTING USER'S DIHEDRAL ANGLE DATA
-    ax.scatter(
-        userpdb_df["phi"],
-        userpdb_df["psi"],
-        s=15,
-        color=plot_config["data_point_colour"],
-        zorder=4,
-        linewidths=0.5,
-        edgecolor=plot_config["data_point_edge_colour"]
-    )
-
-    # AXES AESTHETICS/FEATURES
-    extra_formatting(ax)
-
-    # SAVING RAMACHANDRAN PLOT AS PNG IMAGE
-    logger.info("Saving plot")
-
-    if file_type == "png":
-
-        # ... as PNG
-        plt.savefig(
-            str(plot_name[:-4] + ".png"),
-            dpi=plot_config["out_resolution"],
-            bbox_inches=0,
-            pad_inches=None
-        )
-
-    else:
-        # ... as PDF
-        plt.savefig(
-            f"{plot_name[:-4]}.{file_type}",
-            bbox_inches=0,
-            pad_inches=None
-        )
-
-    os.remove(str(plot_name + '.png'))
-
-    plt.close()
-
-    logger.info(f"Done - Plot saved to{plot_name[:-4]}.{file_type}")
-
-
-
-
-def calculate_rama_angles(pdb_file, chain_id=None):
     """
-    Calculate the phi and psi dihedral angles of a PDB file
+    Render the background of the Ramachandran plot
     """
-    # # Extract dihedral angles
-    # dihedral_angles = extract_dihedrals(
-    #     pdb_file_name=pdb_file,
-    #     chain_id=chain_id
-    # )
+    logger.info("Rendering background")
 
-    # # Remove invalid dihedral angles/angles from ligands or non-canonical residues
-    # dihedral_angles = dihedral_angles.dropna()
+    # Optional parameters
+    background_colour = kwargs.get("background_colour", "Blues")
 
-    # return dihedral_angles
+    # Plot angles to histogram
+    render_fig_size = (10,10)
+    background_fig, background_ax = plt.subplots(
+        1,1,
+        figsize=render_fig_size,
+        tight_layout=True
+    )
+    background_fig.patch.set_visible(False)
+    background_ax.set_axis_off()
+    hist_kwargs = {
+        "bins" : 140,
+        "cmap" : background_colour,
+        "norm" : colors.PowerNorm(0.1),
+        "alpha" : 1
+    }
 
+    background_ax.hist2d(
+        background_angles[:,0],
+        background_angles[:,1],
+        **hist_kwargs
+    )
 
+    tmp_file_name = f"{tempfile.NamedTemporaryFile().name}.png"
+    logger.debug(f"Temporary file name: {tmp_file_name}")
+    save_and_close_fig(tmp_file_name, 80)
 
+    # Apply post-processing to the background image
+    background_fig, background_ax = plt.subplots(
+        1,1,
+        figsize=render_fig_size,
+        tight_layout=True
+    )
+    background_fig.patch.set_visible(False)
+    img_wkargs = {
+        "cmap" : str(background_colour + "_r"),
+        "alpha" : 1
+    }
+    background_ax.set_axis_off()
+    rama_plot = cv2.imread(tmp_file_name, 0)
+    blurred_rama_plot = ndimage.gaussian_filter(rama_plot, sigma=0.3)
+    smoothed_rama_plot = ndimage.percentile_filter(
+        blurred_rama_plot,
+        percentile=90,
+        size=20
+    )
+    background_ax.imshow(smoothed_rama_plot, **img_wkargs)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    save_and_close_fig(path_save, 96)
+    logger.info("Background rendered")
 
 
 
@@ -238,40 +100,6 @@ def map_auth_to_label_asym_ids(chain):
             chain.name,
             chain.subchains()[0].subchain_id(),
         )
-
-
-
-
-
-
-
-
-def add_contour(axis, angles, contour_level, line_colour, contour_alpha=1):
-	"""
-	Appends contour lines to a given axis based on phi/psi angles.
-	"""
-
-	counts, _, _, _ = plt.hist2d(
-		angles[:,0],    # phi
-		angles[:,1],    # psi
-		bins=90,
-		norm=LogNorm(),
-		alpha=0
-	)
-
-	axis.contour(
-		counts.transpose(),
-		extent=[-180, 180, -180, 180],
-		levels=[contour_level],
-		linewidths=1,
-		colors=[line_colour],
-		zorder=2,
-		alpha=contour_alpha
-	)
-
-
-
-
 
 
 
@@ -444,15 +272,16 @@ class RamachandranPlotter:
         return self.all_input_angles
 
 
-    def load_representative_angles(self, path_to_data: pathlib.Path|str = None):
+    def load_representative_angles(
+            self,
+            path_to_data: pathlib.Path|str = "src/top8000_dihedrals.csv.gz"
+        ):
         """
         OPTIONAL
         Load the pre-calculated representative Ramachandran angles
+        TODO: Consider putting some filters in place
         """
-
-        if not path_to_data:
-            # Load the Top8000 dataset
-            path_to_data = pathlib.Path("src/top8000_dihedrals.csv.gz")
+        logger.info("Loading representative Ramachandran angles")
 
         repr_table = pd.read_csv(
             path_to_data,
@@ -467,74 +296,6 @@ class RamachandranPlotter:
         return self.repr_angles
 
 
-    def render_background(self, background_angles: np.array = None, **kwargs):
-        """
-        OPTIONAL
-        Render the background of the Ramachandran plot
-        TODO: Needs cleaning up -- do not want save-read cycle
-        """
-        if not background_angles:
-            background_angles = self.repr_angles
-
-        render_fig_size = (10,10)
-        background_fig, background_ax = plt.subplots(
-            1,1,
-            figsize=render_fig_size,
-            tight_layout=True
-        )
-        background_fig.patch.set_visible(False)
-        background_ax.set_axis_off()
-
-        # Optional parameters
-        background_colour = kwargs.get("background_colour", "Blues")
-
-        hist_kwargs = {
-            "bins" : 140,
-            "cmap" : background_colour,
-            "norm" : colors.PowerNorm(0.1),
-            "alpha" : 1
-        }
-        # Reference https://matplotlib.org/3.2.1/gallery/statistics/hist.html for help with making 2D histogram.
-
-        background_ax.hist2d(background_angles[:,0], background_angles[:,1], **hist_kwargs)
-
-        # Generate tmp file name
-        tmp_file_name = "tmp_background.png"
-        save_and_close_fig(tmp_file_name, 80)
-
-        background_fig, background_ax = plt.subplots(1,1, figsize=render_fig_size, tight_layout=True)
-        background_fig.patch.set_visible(False)
-        kwargs = {
-            "cmap" : str(background_colour + "_r"),
-            "alpha" : 1
-        }
-        background_ax.set_axis_off()
-        rama_plot = cv2.imread(tmp_file_name, 0)
-        blurred_rama_plot = ndimage.gaussian_filter(rama_plot, sigma=0.3)
-        smoothed_rama_plot = ndimage.percentile_filter(blurred_rama_plot, percentile=90, size=20)
-        background_ax.imshow(smoothed_rama_plot, **kwargs)
-
-        # Adjust integer to change background resolution (higher = better quality but slower run time)
-        save_and_close_fig(tmp_file_name, 96)
-        plt.close()
-
-
-
-
-
-    def open_background(self, path_to_img: pathlib.Path|str):
-        """
-        OPTIONAL
-        Open the pre-rendered background image of the Ramachandran plot
-        """
-        pass
-
-
-
-
-
-
-
 
 
 
@@ -543,18 +304,26 @@ class RamachandranPlotter:
             self,
             save_fname="test_plot",
             image_format=["png",],
+            path_background=None
         ):
         """
         Plot the Ramachandran plot of the calculated dihedral angles
         """
 
-        plot_config = json.load(open("src/plot_design_params.json"))
+        # Render the background image
+        if not path_background:
+            path_background = f"tmp/backgrounds/background.png"
+            render_background(
+                self.repr_angles,
+                path_save=path_background
+            )
 
+        plot_config = json.load(open("src/plot_design_params.json"))
 
         config_file = pathlib.Path("plot_design_params.json")
         fig, ax = plt.subplots(1,1, figsize=plot_config["figure_size"], tight_layout=True)        # Defining plot area.
 
-        # ADDING COUNTOURS - Comment this section out to remove contour lines from plot area.
+        # Add contour lines
         add_contour(
             ax,
             self.repr_angles,
@@ -572,7 +341,7 @@ class RamachandranPlotter:
         # ADDING FAVOURED RAMACHANDRAN REGION IMAGE TO BACKGROUND
         # TODO: Update this to dynamic name
         ax.imshow(
-            plt.imread(str("tmp_background.png")),
+            plt.imread(path_background),
             extent=[-195, 195, -195, 195], zorder=1
         )
 
@@ -591,7 +360,15 @@ class RamachandranPlotter:
         )
 
         # AXES AESTHETICS/FEATURES
-        extra_formatting(ax)
+        limits = (-180, 180)
+
+        ax.set_xlim(limits)
+        ax.set_ylim(limits)
+        ax.set_xlabel(u"\u03A6 (\u00B0)")	# phi
+        ax.set_ylabel(u"\u03A8 (\u00B0)")	# psi
+        ax_linewidth = 2
+        ax.spines["left"].set_linewidth(ax_linewidth)
+        ax.spines["bottom"].set_linewidth(ax_linewidth)
 
         # SAVING RAMACHANDRAN PLOT AS PNG IMAGE
         logger.info("Saving plot")
@@ -605,16 +382,6 @@ class RamachandranPlotter:
                 bbox_inches=0,
                 pad_inches=None
             )
-
-        # else:
-        #     # ... as PDF
-        #     plt.savefig(
-        #         f"{plot_name[:-4]}.{file_type}",
-        #         bbox_inches=0,
-        #         pad_inches=None
-        #     )
-
-        # os.remove(str(plot_name + '.png'))
 
         plt.close()
 

@@ -134,14 +134,14 @@ def render_background(dihedral_df, plot_type, file_name, background_colour):
 
 
 
-def add_contour(axis, df, contour_level, line_colour, contour_alpha=1):
+def add_contour(axis, angles, contour_level, line_colour, contour_alpha=1):
 	"""
 	Appends contour lines to a given axis based on phi/psi angles.
 	"""
 
 	counts, _, _, _ = plt.hist2d(
-		df["phi"],
-		df["psi"],
+		angles[:,0],    # phi
+		angles[:,1],    # psi
 		bins=90,
 		norm=LogNorm(),
 		alpha=0

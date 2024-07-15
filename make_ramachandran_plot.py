@@ -5,7 +5,7 @@ import logging
 import argparse
 import pathlib
 
-from src.ramachandran_plotter import main, RamachandranPlotter
+from src.ramachandran_plotter import RamachandranPlotter, render_background
 from src.argument_parser import collect_user_args
 
 import logging
@@ -21,12 +21,7 @@ if __name__ == "__main__":
     )
 
 
-
-
-
-
-
-     # Chains-not-specified version
+    # Chains-not-specified version
     base_path = pathlib.Path("example_data", "uniref50_E6LGL7")
 
     structures = {
@@ -75,9 +70,13 @@ if __name__ == "__main__":
     my_rama_plotter.read_structure_files()
     my_rama_plotter.filter_structure_residues()
     my_rama_plotter.calculate_ramachandran_angles()
-    my_rama_plotter.load_representative_angles()
-    my_rama_plotter.render_background()
-    my_rama_plotter.plot_ramachandran()
+
+    top8000_angles = my_rama_plotter.load_representative_angles(
+        # Could be your own data
+    )
+    render_background(top8000_angles, "tmp/backgrounds/top8000.png")
+
+    my_rama_plotter.plot_ramachandran(path_background="tmp/backgrounds/top8000.png")
 
 
 
