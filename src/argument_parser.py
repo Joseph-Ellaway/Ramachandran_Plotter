@@ -3,10 +3,8 @@ import argparse
 
 def parse_user_args():
 	"""
-	====================================================================================
 	When called, function collects input arguments from the command line. Outputs
 	variables to be used by main()
-	====================================================================================
 	"""
 
 	# Defining arguments
@@ -54,6 +52,16 @@ def parse_user_args():
 	parser.add_argument("-s", "--save_csv",
 						help="Save calculated dihedral angles in separate CSV.",
 	                    action="store_true")
+
+	parser.add_argument(
+		"-e",
+		"--handle-outliers",
+	)
+
+	parser.add_argument(
+		"-l",
+		"--use-label-asym-ids"
+	)
 
 	args = parser.parse_args()
 
