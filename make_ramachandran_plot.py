@@ -75,6 +75,9 @@ if __name__ == "__main__":
     my_rama_plotter.read_structure_files()
     my_rama_plotter.filter_structure_residues()
     my_rama_plotter.calculate_ramachandran_angles()
+    my_rama_plotter.load_representative_angles()
+    my_rama_plotter.render_background()
+    my_rama_plotter.plot_ramachandran()
 
 
 

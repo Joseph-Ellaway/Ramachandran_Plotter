@@ -45,7 +45,7 @@ def remove_axis_visibility(mpl_axis):
 
 
 
-def SaveAndCloseFigure(out_file_name, resolution):			# dtypes : string, int
+def save_and_close_fig(out_file_name, resolution):			# dtypes : string, int
 	"""
 	Saves the plot area (defined before function called) as a PNG image to given file
 	name and resolution.
@@ -81,7 +81,7 @@ def plot_phi_psi(phi_angles, psi_angles, figsize, file_name, background_colour):
 	# Reference https://matplotlib.org/3.2.1/gallery/statistics/hist.html for help with making 2D histogram.
 	ax.set_axis_off()
 	ax.hist2d(phi_angles, psi_angles, **kwargs)
-	SaveAndCloseFigure(file_name, 80)
+	save_and_close_fig(file_name, 80)
 
 
 
@@ -107,7 +107,7 @@ def smooth(file_name, figsize, background_colour, bkgd_resolution = 96):
 
 	# Adjust integer to change background resolution (higher = better quality but slower run time)
 
-	SaveAndCloseFigure(file_name, bkgd_resolution)
+	save_and_close_fig(file_name, bkgd_resolution)
 	plt.close()
 
 
