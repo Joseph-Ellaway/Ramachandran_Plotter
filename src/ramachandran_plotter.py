@@ -139,7 +139,7 @@ class RamachandranPlotter:
         }
         """
         self.input_structures = input_structures
-        self.output_dir = pathlib.Path(pathlib.Path(output_dir).stem)
+        self.output_dir = pathlib.Path(pathlib.Path(output_dir).parent)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.output_plot_fname = pathlib.Path(output_dir)
         self.plot_type = plot_type
@@ -284,7 +284,7 @@ class RamachandranPlotter:
                 prev_res = chain.previous_residue(res)
                 next_res = chain.next_residue(res)
 
-                if not prev_res and not next_res:
+                if not prev_res or not next_res:
                     # No previous or next residue
                     logger.debug(f"Residue {res} has no previous or next residue")
                     continue

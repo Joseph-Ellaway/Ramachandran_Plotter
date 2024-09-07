@@ -168,3 +168,4 @@ cython_debug/
 
 # Data dirs
 scratch/
+user_example_data/

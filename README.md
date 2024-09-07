@@ -42,16 +42,15 @@ following are examples in order of increasing complexity.
 
 ### 1) Minimal run example
 
-The simplest way to run the script is as follows
-
+The simplest way to run the script is as follows:
 
 ```shell
 python3 make_ramachandran_plot.py \
 	--input-file /path_to_file/<file-name-1.cif> A C \
 	--input-file /path_to_file/<file-name-2.cif> A B \
 	--input-file ...
-	--input-file /path_to_file/<file-name-n.cif> * \
-
+	--input-file /path_to_file/<file-name-n.cif> \
+	--out-plot-file /path_to_save_plot/<plot-name.png>
 ```
 
 The input to `--input_file` is formatted as the path to your mmCIF (or PDB) file,
@@ -66,29 +65,108 @@ For example:
 python3 make_ramachandran_plot.py \
 	--input-file example_data/uniref50_E6LGL7/5e31_updated.cif \
 	--input-file example_data/uniref50_E6LGL7/5dvy_updated.cif A \
-	--out-dir
+	--out-plot-file user_example_data/plot.png
 ```
 
+The first input file will have only chain A (author-defined) parsed. The second will have
+all available chains parsed.
 
+### 2) Plot and save angles
 
-Optional arguments:
+The Ramachandran angles extracted from the input structures can be saved in a standalone
+CSV file using the following command:
 
-	--help				: Prints summary of arguments
-	--verbose			: Increase output verbosity
-	--models <int>		: Desired model number (default = use all models). Model number corresponds to order in PDB file.
-	--chains <int>		: Desired chain number (default = use all chains). Chain number corresponds to order in PDB file.
-	--out_dir <path>	: Out directory. Must be available before-hand.
-	--plot_type <int>	: Type of angles plotted Ramachandran diagram. Options detailed below.
-	--save_csv			: Saves calculated dihedral angles in a separate CSV file.
+```shell
+python3 make_ramachandran_plot.py \
+	--input-file /path_to_file/<file-name-1.cif> A C \
+	--input-file /path_to_file/<file-name-2.cif> A B \
+	--input-file ...
+	--input-file /path_to_file/<file-name-n.cif> \
+	--out-plot-file /path_to_save_plot/<plot-name.png> \
+	--save-csv-file /path_to_save_csv/<csv-file-name.csv>
+```
 
-```--plot_type <int>``` can be any of the following integers to determine the type of output plot desired:
+For example:
 
-	0 	: All angles
-	1 	: General (All residues bar Gly, Pro, Ile, Val and pre-Pro)
-	2 	: Glycine
-	3 	: Proline (cis and trans)
-	4 	: Pre-proline (residues preceeding a proline)
-	5 	: Ile or Val
+```shell
+python3 make_ramachandran_plot.py \
+	--input-file example_data/uniref50_E6LGL7/5e31_updated.cif \
+	--input-file example_data/uniref50_E6LGL7/5dvy_updated.cif A \
+	--out-plot-file user_example_data/plot.png \
+	--save-csv-file user_example_data/angle_data.csv
+```
+
+### 3) Plot with excluded angles
+
+Angles from selected residues can be excluded using any or all of the following.
+
+```shell
+python3 make_ramachandran_plot.py \
+	--input-file /path_to_file/<file-name-1.cif> A C \
+	--input-file /path_to_file/<file-name-2.cif> A B \
+	--input-file ...
+	--input-file /path_to_file/<file-name-n.cif> \
+	--canonical-only \
+	--exclude-pre-proline \
+	--exclude-residues LIST,OF,RES,TO,REMOVE \
+	--out-plot-file /path_to_save_plot/<plot-name.png>
+```
+
+For examples:
+
+```shell
+python3 make_ramachandran_plot.py \
+	--input-file example_data/uniref50_E6LGL7/5e31_updated.cif \
+	--input-file example_data/uniref50_E6LGL7/5dvy_updated.cif A \
+	--canonical-only \
+	--exclude-pre-proline \
+	--exclude-residues VAL,ALA \
+	--out-plot-file user_example_data/plot.png
+```
+
+### All arguments
+
+For a full list of parsable arguments:
+
+```
+options:
+  -h, --help            show this help message and exit
+  -v, --verbose         Increase output verbosity
+  -i INPUT_FILE [INPUT_FILE ...], --input-file INPUT_FILE [INPUT_FILE ...]
+                        Path(s) to mmCIF file(s). Separate multiple files with a comma. E.g. file1.cif,file2.cif. To specify chains, use multiple -i flags
+                        for each file, followed by the label_asym_id chain ID. E.g. -i file1.cif:A,file2.cif:B,C
+  -o OUT_PLOT_FILE, --out-plot-file OUT_PLOT_FILE
+                        Directory and filename of output plot.
+  -p PLOT_TYPE, --plot-type PLOT_TYPE
+                        Type of angles plotted on Ramachandran diagram. Refer to README.md for options and details.
+  -f FILE_NAME, --file-name FILE_NAME
+                        File name for output plot. Defaults to 'ramachandran_plot'.
+  -t FILE_TYPE, --file-type FILE_TYPE
+                        File type for output plot. Options: PNG (default, 96 dpi), PDF, SVG, EPS and PS.
+  -s SAVE_CSV_FILE, --save-csv-file SAVE_CSV_FILE
+                        Path to save calculated dihedral angles in separate CSV.
+  -r, --remove-outliers
+                        Remove outliers from the plot. Determined by representative angles.
+  -u, --use-struct-asym-ids
+                        Use structure's asym IDs as chain IDs, rather than author-defined chain IDs.
+  -e EXISTING_RAMA_BACKGROUND, --existing-rama-background EXISTING_RAMA_BACKGROUND
+                        Path to existing Ramachandran distribution background file.
+  -x EXCLUDE_RESIDUES, --exclude-residues EXCLUDE_RESIDUES
+                        Exclude additional residues from the plot.
+  -c, --canonical-only  Only plot canonical residues.
+  -n, --exclude-pre-proline
+                        Exclude residues processing pre-proline residues.
+```
+
+`--plot_type <str>` can be any of the following integers to determine the type of output plot desired:
+```
+"all" 			: All
+"general" 		: General (All residues bar Gly, Pro, Ile, Val and pre-Pro)
+"glycine" 		: Glycine
+"proline" 		: Pro
+"pre-proline" 	: Pre-proline (residues preceeding a proline)
+"ile-val" 		: Ile or Val
+```
 
 Backgrounds to Ramachandran plots are generated using dihedral angle data from peptide structures solved at high resolution from the Top8000 peptide database.
 
@@ -96,11 +174,15 @@ These are peptides for which models have been solved at very high resolutions an
 
 Several parameters can be easily adjusted to change the appearance of the returned graph.
 
-#### All angle plot
+### All angle plot for all chains in a structure file
 
-	python RamachandranPlotter.py --pdb 6GVE.pdb --plot_type 0
+```
+python make_ramachandran_plot.py --input-file example_data/6gve_updated.cif --plot-type all --out-plot-file user_example_data/6gve_plot.png
+```
 
-<img src="./example_plot/AllRamachandranPlot.png" style="zoom:35%;" />
+<img src="./example_data/AllRamachandranPlot.png" style="zoom:35%;" />
+
+---
 
 ## Adjustable Variables (recommended)
 

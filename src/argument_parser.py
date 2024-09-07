@@ -73,22 +73,6 @@ def parse_user_args():
 	)
 
 	parser.add_argument(
-		"-c",
-		"--canonical-only",
-		default=False,
-		help="Only plot canonical residues.",
-		action="store_true"
-	)
-
-	parser.add_argument(
-		"-x",
-		"--exclude-residues",
-		help="Exclude additional residues from the plot.",
-		type=list,
-		default=[]
-	)
-
-	parser.add_argument(
 		"-t",
 		"--file-type",
 		help="File type for output plot. Options: PNG (default, 96 dpi), PDF, SVG, EPS and PS.",
@@ -125,6 +109,22 @@ def parse_user_args():
 		help="Path to existing Ramachandran distribution background file.",
 		type=str,
 		default=None
+	)
+
+	parser.add_argument(
+		"-x",
+		"--exclude-residues",
+		help="Exclude additional residues from the plot.",
+		type=list,
+		default=[]
+	)
+
+	parser.add_argument(
+		"-c",
+		"--canonical-only",
+		default=False,
+		help="Only plot canonical residues.",
+		action="store_true"
 	)
 
 	parser.add_argument(
