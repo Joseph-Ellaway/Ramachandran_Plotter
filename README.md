@@ -17,7 +17,7 @@ Modules:
 
 Install with pip:
 
-	pip install numpy pandas matplotlib scipy biopython matplotlib argparse opencv-python
+	pip install -r requirements
 
 
 ## New config file
