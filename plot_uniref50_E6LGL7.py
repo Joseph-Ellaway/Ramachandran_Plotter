@@ -7,6 +7,12 @@ import logging
 
 if __name__ == "__main__":
 
+    """
+    Example script to plot Ramachandran plots for a set of structures from the
+    Uniref50_E6LGL7 dataset. This acts as a simple example of how to call appropriate
+    methods and their order to generate Ramachandran plots.
+    """
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(message)s"
@@ -51,7 +57,7 @@ if __name__ == "__main__":
         base_path / "8f3x_updated.cif" : ['*'],
     }
 
-    # Initialise
+    # 1) Initialise
     my_rama_plotter = RamachandranPlotter(
         input_structures=structures,
         output_dir=pathlib.Path("example_data", "example_output"),
@@ -64,22 +70,25 @@ if __name__ == "__main__":
         # config_file=None
     )
 
-    # Extract structures from input files in structures dictionary
+    # 2) Extract structures from input files in structures dictionary
     my_rama_plotter.extract_structures()
 
-    # Filter residues
+    # 3) Filter residues
     my_rama_plotter.filter_residues(
         # exclude_physicochem=[] # Could be your own data
         # exclude_additional_residues=[], # Could be your own data
     )
 
-    # Calculate Ramachandran angles
+    # 4) Calculate Ramachandran angles
     my_rama_plotter.calculate_ramachandran_angles()
 
-    # Render background
+    # 5) Load representative angles
     top8000_angles = my_rama_plotter.load_representative_angles(
         # Could be your own data
     )
+
+    # 6) Render background
     render_background(top8000_angles, "tmp/backgrounds/top8000.png")
 
+    # 7) Plot your input Ramachandran angles
     my_rama_plotter.plot_ramachandran(path_background="tmp/backgrounds/top8000.png")

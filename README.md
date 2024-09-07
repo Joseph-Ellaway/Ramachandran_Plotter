@@ -32,25 +32,55 @@ Install with pip:
 // Colour of data point's border.
 // Colour map of background plot. Refer to https://matplotlib.org/stable/tutorials/colors/colormaps.html for colormap options
 
-## Run Instructions
+## Run Instructions: CLI
 
-Minimal run example:
+The script `make_ramachandran_plot.py` may be used to access the `RamachandranPlotter()`
+object, without needing to write any code. This option will be preferred by users who
+need a plot, given a set of structures. There are several optional arguments, and
+therefore different ways of running the `make_ramachandran_plot.py` script. The
+following are examples in order of increasing complexity.
 
-	python run_ramachandran_plotter.py --pdb /path_to_file/<file-name.pdb>
+### 1) Minimal run example
+
+The simplest way to run the script is as follows
+
+
+```shell
+python3 make_ramachandran_plot.py \
+	--input_file /path_to_file/<file-name-1.cif> A C \
+	--input_file /path_to_file/<file-name-2.cif> A B \
+	--input_file ...
+	--input_file /path_to_file/<file-name-n.cif> * \
+
+```
+
+The input to `--input_file` is formatted as the path to your mmCIF (or PDB) file,
+followed by a space-separated list of chain IDs. By default, author-specified chain IDs
+(`auth_asym_id`) are used, but this can be overridden to use `struct_asym_id` by parsing
+in the additional argument `--use-struct-asym-ids` or `-u`. To parse all chains in the
+file, use the wildcard `*`.
+
+For example:
+
+```shell
+python3 make_ramachandran_plot.py --input_file example_data/uniref50_E6LGL7/5e31_updated.cif *
+```
+
+
 
 Optional arguments:
 
-	--help			: Prints summary of arguments
-	--verbose		: Increase output verbosity
+	--help				: Prints summary of arguments
+	--verbose			: Increase output verbosity
 	--models <int>		: Desired model number (default = use all models). Model number corresponds to order in PDB file.
 	--chains <int>		: Desired chain number (default = use all chains). Chain number corresponds to order in PDB file.
 	--out_dir <path>	: Out directory. Must be available before-hand.
 	--plot_type <int>	: Type of angles plotted Ramachandran diagram. Options detailed below.
-	--save_csv		: Saves calculated dihedral angles in a separate CSV file.
+	--save_csv			: Saves calculated dihedral angles in a separate CSV file.
 
 ```--plot_type <int>``` can be any of the following integers to determine the type of output plot desired:
 
-	0 	: All
+	0 	: All angles
 	1 	: General (All residues bar Gly, Pro, Ile, Val and pre-Pro)
 	2 	: Glycine
 	3 	: Proline (cis and trans)
