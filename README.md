@@ -47,10 +47,10 @@ The simplest way to run the script is as follows
 
 ```shell
 python3 make_ramachandran_plot.py \
-	--input_file /path_to_file/<file-name-1.cif> A C \
-	--input_file /path_to_file/<file-name-2.cif> A B \
-	--input_file ...
-	--input_file /path_to_file/<file-name-n.cif> * \
+	--input-file /path_to_file/<file-name-1.cif> A C \
+	--input-file /path_to_file/<file-name-2.cif> A B \
+	--input-file ...
+	--input-file /path_to_file/<file-name-n.cif> * \
 
 ```
 
@@ -58,12 +58,15 @@ The input to `--input_file` is formatted as the path to your mmCIF (or PDB) file
 followed by a space-separated list of chain IDs. By default, author-specified chain IDs
 (`auth_asym_id`) are used, but this can be overridden to use `struct_asym_id` by parsing
 in the additional argument `--use-struct-asym-ids` or `-u`. To parse all chains in the
-file, use the wildcard `*`.
+file, give only the file path.
 
 For example:
 
 ```shell
-python3 make_ramachandran_plot.py --input_file example_data/uniref50_E6LGL7/5e31_updated.cif *
+python3 make_ramachandran_plot.py \
+	--input-file example_data/uniref50_E6LGL7/5e31_updated.cif \
+	--input-file example_data/uniref50_E6LGL7/5dvy_updated.cif A \
+	--out-dir
 ```
 
 

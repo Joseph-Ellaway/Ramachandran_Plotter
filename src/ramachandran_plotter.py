@@ -14,9 +14,6 @@ from .argument_parser import *
 # Logging
 logger = logging.getLogger(__name__)
 
-
-
-
 def render_background(
         background_angles: np.array,
         path_save: pathlib.Path|str = None,
@@ -82,7 +79,6 @@ def render_background(
     logger.info("Background rendered")
 
 
-
 def map_auth_to_label_asym_ids(chain):
     """
     Convert auth_seq_id to label_seq_id
@@ -103,11 +99,6 @@ def map_auth_to_label_asym_ids(chain):
         )
 
 
-
-
-
-
-
 def save_and_close_fig(out_file_name, resolution):			# dtypes : string, int
 	"""
 	Saves the plot area (defined before function called) as a PNG image to given file
@@ -115,7 +106,6 @@ def save_and_close_fig(out_file_name, resolution):			# dtypes : string, int
 	"""
 	plt.savefig(out_file_name, dpi=resolution, bbox_inches=0, pad_inches=None)
 	plt.close()
-
 
 
 
@@ -149,9 +139,10 @@ class RamachandranPlotter:
         }
         """
         self.input_structures = input_structures
-        self.output_dir = output_dir
+        self.output_dir = pathlib.Path(pathlib.Path(output_dir).stem)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.output_plot_fname = pathlib.Path(output_dir)
         self.plot_type = plot_type
-
         self.excluded_residues = exclude_additional_residues
         self.exclude_pre_proline = exclude_pre_proline
         self.strictly_canonical = strictly_canonical
@@ -357,8 +348,7 @@ class RamachandranPlotter:
 
     def plot_ramachandran(
             self,
-            save_fname="test_plot",
-            image_format=["png",],
+            image_formats=["png",],
             path_background=None
         ):
         """
@@ -372,6 +362,7 @@ class RamachandranPlotter:
                 self.repr_angles,
                 path_save=path_background
             )
+
 
         plot_config = json.load(open("src/plot_design_params.json"))
 
@@ -427,24 +418,31 @@ class RamachandranPlotter:
 
         # SAVING RAMACHANDRAN PLOT AS PNG IMAGE
         logger.info("Saving plot")
+        for image_format in image_formats:
+            plot_dir_fname = self.output_plot_fname
+            if image_format == "png":
+                # ... as PNG
+                plt.savefig(
+                    plot_dir_fname,
+                    dpi=plot_config["out_resolution"],
+                    bbox_inches=0,
+                    pad_inches=None
+                )
+            else:
+                plt.savefig(
+                    plot_dir_fname,
+                    bbox_inches=0,
+                    pad_inches=None
+                )
+            logger.info(f"Plot saved as {plot_dir_fname}")
 
-        if "png" in image_format:
+            plt.close()
 
-            # ... as PNG
-            plt.savefig(
-                f"{save_fname}.png",
-                dpi=plot_config["out_resolution"],
-                bbox_inches=0,
-                pad_inches=None
-            )
 
-        plt.close()
-
-        logger.info(f"Done - Plot saved")
 
     def save_ramachandran_angles(self, fname: str = "ramachandran_angles.csv"):
         """
-        OPTIONAL
         Save the calculated dihedral angles to a CSV file
         """
         np.savez_compressed(fname, angles=self.all_input_angles)
+        logger.info(f"Ramachandran angles saved to {fname}")

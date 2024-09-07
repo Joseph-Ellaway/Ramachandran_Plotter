@@ -1,5 +1,4 @@
 import logging
-import argparse
 import pathlib
 
 from src.ramachandran_plotter import RamachandranPlotter, render_background
@@ -28,13 +27,13 @@ if __name__ == "__main__":
     # Initialise
     my_rama_plotter = RamachandranPlotter(
         input_structures=structures,
-        output_dir=pathlib.Path(user_args.out_dir),
-        plot_type="all",
+        output_dir=pathlib.Path(user_args.out_plot_file),
+        plot_type=user_args.plot_type,
         # existing_rama_ditribution=None,
         # remove_outliers=False,
-        # strictly_canonical=False,
-        # exclude_additional_residues=[],
-        # exclude_pre_proline=False,
+        strictly_canonical=user_args.canonical_only,
+        exclude_additional_residues=user_args.exclude_residues,
+        exclude_pre_proline=user_args.exclude_pre_proline,
         # config_file=None
     )
 
@@ -56,4 +55,9 @@ if __name__ == "__main__":
     )
     render_background(top8000_angles, "tmp/backgrounds/top8000.png")
 
-    my_rama_plotter.plot_ramachandran(path_background="tmp/backgrounds/top8000.png")
+    my_rama_plotter.plot_ramachandran(
+        path_background="tmp/backgrounds/top8000.png"
+    )
+
+    if user_args.save_csv_file:
+        my_rama_plotter.save_ramachandran_angles(fname=user_args.save_csv_file)
