@@ -1,9 +1,7 @@
 import logging
-import argparse
 import pathlib
 
 from src.ramachandran_plotter import RamachandranPlotter, render_background
-from src.argument_parser import collect_user_args
 
 import logging
 
@@ -85,41 +83,3 @@ if __name__ == "__main__":
     render_background(top8000_angles, "tmp/backgrounds/top8000.png")
 
     my_rama_plotter.plot_ramachandran(path_background="tmp/backgrounds/top8000.png")
-
-
-
-
-
-
-    # # Loading user's input arguments
-    # (
-    #     pdb,
-    #     itmod,
-    #     model_num,
-    #     itchain,
-    #     chain_num,
-    #     plot_type,
-    #     out_dir,
-    #     verb,
-    #     save,
-    #     file_type
-    # ) = collect_user_args()
-
-
-    # logging.basicConfig(
-    #     level=logging.INFO,
-    #     format="%(asctime)s - %(levelname)s - %(message)s"
-    # )
-    # logging.debug("Starting Ramachandran Plotter")
-
-    # main(
-    #     pdb,
-    #     itmod,
-    #     model_num,
-    #     itchain,
-    #     chain_num,
-    #     plot_type,
-    #     out_dir,
-    #     save,
-    #     file_type
-    # )

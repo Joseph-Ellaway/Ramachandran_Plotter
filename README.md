@@ -36,7 +36,6 @@ Install with pip:
 
 Minimal run example:
 
-	<!-- python RamachandranPlotter.py --pdb /path_to_file/<file-name.pdb> -->
 	python run_ramachandran_plotter.py --pdb /path_to_file/<file-name.pdb>
 
 Optional arguments:

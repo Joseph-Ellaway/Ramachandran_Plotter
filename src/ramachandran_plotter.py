@@ -19,10 +19,11 @@ logger = logging.getLogger(__name__)
 
 def render_background(
         background_angles: np.array,
-        path_save: pathlib.Path|str,
+        path_save: pathlib.Path|str = None,
         **kwargs
     ):
     """
+    TODO: this needs cleaning up
     Render the background of the Ramachandran plot
     """
     logger.info("Rendering background")
@@ -130,7 +131,6 @@ class RamachandranPlotter:
             input_structures: dict,
             output_dir : pathlib.Path|str,
             plot_type : str,
-            filter_residue_type=None,
             existing_rama_ditribution=None,
             remove_outliers=False,
             strictly_canonical=False,
@@ -168,7 +168,7 @@ class RamachandranPlotter:
         pass
 
 
-    def read_structure_files(self):
+    def extract_structures(self):
         """
         Read in PDB/mmCIF files from a directory
         """
@@ -194,7 +194,11 @@ class RamachandranPlotter:
         return self.polymers
 
 
-    def filter_structure_residues(self, exclude_additional_residues: list = None):
+    def filter_residues(
+            self,
+            exclude_physicochem: list = None,
+            exclude_additional_residues: list = None
+        ):
         """
         OPTIONAL
         Filter structures based on the given plot-type
@@ -217,9 +221,54 @@ class RamachandranPlotter:
             case _:
                 logger.info("No plot type specified. Defaulting to all residues")
 
+        if exclude_physicochem:
+            for property in exclude_physicochem:
+                match property:
+                    case "hydrophobic":
+                        self.excluded_residues.extend(
+                            ["ILE", "VAL", "LEU", "MET", "PHE", "TRP"]
+                        )
+                    case "polar":
+                        self.excluded_residues.extend(
+                            ["SER", "THR", "ASN", "GLN", "CYS", "TYR"]
+                        )
+                    case "charged":
+                        self.excluded_residues.extend(
+                            ["ARG", "LYS", "ASP", "GLU", "HIS"]
+                        )
+                    case "aromatic":
+                        self.excluded_residues.extend(
+                            ["PHE", "TRP", "TYR"]
+                        )
+                    case "positive":
+                        self.excluded_residues.extend(
+                            ["ARG", "LYS", "HIS"]
+                        )
+                    case "negative":
+                        self.excluded_residues.extend(
+                            ["ASP", "GLU"]
+                        )
+                    case "small":
+                        self.excluded_residues.extend(
+                            ["ALA", "GLY", "SER", "THR", "CYS"]
+                        )
+                    case "tiny":
+                        self.excluded_residues.extend(
+                            ["ALA", "GLY", "SER"]
+                        )
+                    case "large":
+                        self.excluded_residues.extend(
+                            ["ILE", "LEU", "MET", "PHE", "TRP", "TYR"]
+                        )
+                    case _:
+                        logger.info(f"Unknown physico-chemical property: {property}")
+
         # Optional additional residues to exclude
         if exclude_additional_residues:
             self.excluded_residues.extend(exclude_additional_residues)
+
+        # Convert to set for faster lookup
+        self.excluded_residues = set(self.excluded_residues)
 
 
 
@@ -237,7 +286,7 @@ class RamachandranPlotter:
         for label, chain in self.polymers.items():
             logger.info(f"Calculating Ramachandran angles for {label}")
             for res in chain.get_polymer():
-                if res in self.excluded_residues:
+                if res.name in self.excluded_residues:
                     # Exluded residue
                     continue
 
@@ -265,6 +314,12 @@ class RamachandranPlotter:
                 angle = gemmi.calculate_phi_psi(prev_res, res, next_res)
                 self.all_input_angles.append(angle)
 
+        # Nothing calculated
+        if len(self.all_input_angles) == 0:
+            logger.error("No angles calculated")
+            return None
+
+        # Convert to numpy array and degrees
         self.all_input_angles = np.array(self.all_input_angles)
         self.all_input_angles = np.degrees(self.all_input_angles)
 
